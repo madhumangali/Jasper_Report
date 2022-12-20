@@ -1,0 +1,31 @@
+#server:
+#  port: 8092
+#  servlet:
+#    context-path: /employee
+#spring:
+#  application:
+#    name: Employee
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/employee2
+#    username: postgres
+#    password: 0367
+#    driver-class-name: org.postgresql.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+#    properties:
+#     hibernate:
+#        database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+#     main:
+#      web-application-type: none
+
+swagger:
+  url: http://localhost:8091/assessmentone
+#eureka:
+#  client:
+#    register-with-eureka: false
+#    fetch-registry: false
+#  instance:
+#    hostname: localhost

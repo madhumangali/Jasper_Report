@@ -1,0 +1,11 @@
+server:
+  port: 8091
+  servlet:
+    context-path: /assessmentone
+
+spring:
+  application:
+    name: AssessmentOne
+  profiles:
+    active: local
+    
