@@ -26,7 +26,7 @@ public class EmployeeController {
     @Autowired
     private JasperReportService jasperReportService;
 
-    @GetMapping(value = "/get/tables")
+    @GetMapping(value = "/{schemaName}/entityList")
     public ResponseEntity<?> getTablesList(@RequestParam String schemaName) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTablesList(schemaName), HttpStatus.OK);
@@ -35,7 +35,7 @@ public class EmployeeController {
 
     }
 
-    @GetMapping(value = "/get/table/columnNames")
+    @GetMapping(value = "/{schemaName}/{tableName}")
     public ResponseEntity<?> getTableColumnsAndChildTables(@RequestParam String schemaName,@RequestParam String tableName) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTableColumnsAndChildTables(schemaName,tableName), HttpStatus.OK);
@@ -44,8 +44,8 @@ public class EmployeeController {
 
     }
 
-    @GetMapping(value = "/get/sample")
-    public ResponseEntity<?> getTableColumnsAndChildTables(@RequestParam boolean recentStyle,@RequestBody MultiTableColumnsParams multiTableColumnsParams) throws Exception {
+    @GetMapping(value = "/{recentStyle}")
+    public ResponseEntity<?> getJasperReport(@RequestParam boolean recentStyle,@RequestBody MultiTableColumnsParams multiTableColumnsParams) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getJasperReport(recentStyle,multiTableColumnsParams), HttpStatus.OK);
         log.info("Table columns Data fetched successfully");
@@ -53,7 +53,7 @@ public class EmployeeController {
 
     }
 
-    @GetMapping(value = "/get/multipleTableColumns")
+    @GetMapping(value = "/{schemaName}")
     public ResponseEntity<?> getMultipleTableColumnsAndChildTables(@RequestParam String schemaName, @RequestBody List<String> tableNames) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getMultipleTableColumnsAndChildTables(schemaName,tableNames),
@@ -63,7 +63,7 @@ public class EmployeeController {
 
     }
 
-    @GetMapping(value = "/get/schemas")
+    @GetMapping(value = "/")
     public ResponseEntity<?> getSchemas() throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getSchemas(), HttpStatus.OK);
@@ -71,7 +71,5 @@ public class EmployeeController {
         return response;
 
     }
-
-
 
 }
