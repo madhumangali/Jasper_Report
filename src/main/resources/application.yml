@@ -1,11 +1,11 @@
 server:
   port: 8091
   servlet:
-    context-path: /assessmentone
+    context-path: /jasper_report
 
 spring:
   application:
-    name: AssessmentOne
+    name: Jasper_Report
   profiles:
     active: local
     

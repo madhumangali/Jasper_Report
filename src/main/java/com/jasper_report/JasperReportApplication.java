@@ -9,11 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@ComponentScan("com.assessmentone.*")
-public class AssessmentOneApplication {
+@ComponentScan("com.jasper_report.*")
+public class JasperReportApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AssessmentOneApplication.class, args);
+        SpringApplication.run(JasperReportApplication.class, args);
         System.setProperty("java.awt.headless", "false");
     }
 
