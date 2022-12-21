@@ -1,5 +1,6 @@
 package com.jasper_report.repository;
 
+import com.jasper_report.exception.EmployeeException;
 import com.jasper_report.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,6 +44,9 @@ public interface CommonRepository extends JpaRepository<Employee,Long> {
 
     default List<Object[]> getSelectedColumns(EntityManager entityManager,String sql){
 
+        if(sql.isEmpty()){
+            throw new EmployeeException("Sql statement is not proper ");
+        }
         javax.persistence.Query query = entityManager.createNativeQuery(sql);
         List<Object[]> queryResultList = query.getResultList();
 

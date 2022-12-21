@@ -11,6 +11,7 @@ import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import com.jasper_report.dto.MultiTableColumnsResult;
 import com.jasper_report.dto.StyleBuilderParamsDto;
+import com.jasper_report.exception.EmployeeException;
 import com.jasper_report.mapper.StyleBuilderMapper;
 import com.jasper_report.model.Enum.PdfTitle;
 import com.jasper_report.model.StyleBuilderDuplicate;
@@ -56,6 +57,11 @@ public class JasperReportServiceImpl implements JasperReportService {
     StyleBuilderParamsDto headerStyle = null,columnStyle=null,titleStyle=null,subTitleStyle=null;
 
     public String getReport(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException,  JRException, ClassNotFoundException {
+
+        if(multiTableColumnsResult.getFileName() == null)
+        {
+            throw  new EmployeeException("File Name should not be null/missed");
+        }
         String filePath = "D:\\New\\"+multiTableColumnsResult.getFileName()+".pdf";
 
         DynamicReport dynaReport = getJasperReport(recentStyle,multiTableColumnsResult);
@@ -123,6 +129,10 @@ public class JasperReportServiceImpl implements JasperReportService {
 
             List<StyleBuilderDuplicate> styleBuilderDuplicateList=styleBuilderDuplicateRepository.findAll();
 
+            if(styleBuilderDuplicateList.isEmpty()){
+                throw new EmployeeException("Previous style is not found in database , pls add styling manually");
+            }
+
             List<StyleBuilderParamsDto> styleBuilderParamsDtoList=new ArrayList<>();
 
             styleBuilderDuplicateList.stream().forEach(styleBuilderDuplicate -> {
@@ -140,6 +150,11 @@ public class JasperReportServiceImpl implements JasperReportService {
 
         Map map = multiTableColumnsResult.getRows().get(1);
 
+        if(multiTableColumnsResult.getStyleBuilderParamsList().isEmpty()){
+            throw new EmployeeException("jasper report styling params are not passed");
+        }
+
+
         multiTableColumnsResult.getStyleBuilderParamsList().stream().forEach(style ->{
             if(style.getPdfTitle().equals(PdfTitle.HEADER)) {
                 headerStyle = style;
@@ -151,6 +166,16 @@ public class JasperReportServiceImpl implements JasperReportService {
                 subTitleStyle=style;
             }
         });
+
+        if(columnStyle.getPdfTitle()!= PdfTitle.COLUMN ){
+            throw new EmployeeException("styling params are not given for COLUMNS");
+        } else if (headerStyle.getPdfTitle()!=PdfTitle.HEADER) {
+            throw new EmployeeException("styling params are not given for HEADER");
+        } else if (titleStyle.getPdfTitle()!=PdfTitle.TITLE) {
+            throw new EmployeeException("styling params are not given for TITLE");
+        }else if (subTitleStyle.getPdfTitle() !=PdfTitle.SUBTITLE){
+            throw new EmployeeException("styling params are not given for SUBTITLE");
+        }
 
         AtomicInteger indexTwo=new AtomicInteger(0);
 
