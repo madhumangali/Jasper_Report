@@ -19,6 +19,7 @@ import com.jasper_report.model.StyleBuilderParams;
 import com.jasper_report.repository.StyleBuilderDuplicateRepository;
 import com.jasper_report.repository.StyleBuilderRepository;
 import com.jasper_report.service.JasperReportService;
+import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -42,6 +43,7 @@ import java.util.function.Function;
 
 
 @Service
+@Log4j2
 public class JasperReportServiceImpl implements JasperReportService {
 
     @Autowired
@@ -60,8 +62,10 @@ public class JasperReportServiceImpl implements JasperReportService {
 
         if(multiTableColumnsResult.getFileName() == null)
         {
+            log.error("File Name should not be null/missed");
             throw  new EmployeeException("File Name should not be null/missed");
         }
+
         String filePath = "D:\\New\\"+multiTableColumnsResult.getFileName()+".pdf";
 
         DynamicReport dynaReport = getJasperReport(recentStyle,multiTableColumnsResult);
@@ -71,6 +75,7 @@ public class JasperReportServiceImpl implements JasperReportService {
         JasperExportManager.exportReportToPdfFile(jp, filePath);
 
         if(recentStyle == false) {
+            log.info("The entire data was deleted from the table : StyleBuilderDuplicate");
             styleBuilderDuplicateRepository.deleteAll();
         }
 
@@ -83,6 +88,8 @@ public class JasperReportServiceImpl implements JasperReportService {
             styleBuilderParams.setTime(Time.valueOf(LocalTime.now()));
             styleBuilderRepository.save(styleBuilderParams);
 
+            log.info("The styling's are saved in table : StyleBuilderParams ");
+
             if(recentStyle == false) {
                 StyleBuilderDuplicate styleBuilderDuplicate = styleBuilderMapper.mapTODuplicate(param, multiTableColumnsResult.getTitleName(),
                         multiTableColumnsResult.getSubtitleName(), multiTableColumnsResult.getFileName(), multiTableColumnsResult.getReportHeader(),
@@ -90,10 +97,12 @@ public class JasperReportServiceImpl implements JasperReportService {
                 styleBuilderDuplicate.setDate(Date.valueOf(LocalDate.now()));
                 styleBuilderDuplicate.setTime(Time.valueOf(LocalTime.now()));
                 styleBuilderDuplicateRepository.save(styleBuilderDuplicate);
+                log.info("The styling's are saved in table : StyleBuilderDuplicate ");
             }
 
         });
 
+        log.info("The jasper_report is generated");
         return "The Pdf Generated Path : "+filePath;
     }
 
@@ -105,10 +114,13 @@ public class JasperReportServiceImpl implements JasperReportService {
             throw new RuntimeException(e);
         }
 
+        log.info("The Styling's are formed for : "+styleBuilderParams.getPdfTitle());
+
         return sb;
     };
 
     Function<StyleBuilderParamsDto,Style> reportHeaderStyle = (styleBuilderParams) ->{
+
         Style sb = new Style();
         sb.setPaddingTop(10);
         sb.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -118,6 +130,9 @@ public class JasperReportServiceImpl implements JasperReportService {
         sb.setFont(Font.ARIAL_BIG_BOLD);
         sb.setTextColor(Color.blue);
         sb.setBackgroundColor(Color.PINK);
+
+        log.info("The Styling's are formed for : "+styleBuilderParams.getPdfTitle());
+
         return sb;
     };
 
@@ -130,6 +145,7 @@ public class JasperReportServiceImpl implements JasperReportService {
             List<StyleBuilderDuplicate> styleBuilderDuplicateList=styleBuilderDuplicateRepository.findAll();
 
             if(styleBuilderDuplicateList.isEmpty()){
+                log.error("Previous style is not found in database , pls add styling manually");
                 throw new EmployeeException("Previous style is not found in database , pls add styling manually");
             }
 
@@ -142,6 +158,8 @@ public class JasperReportServiceImpl implements JasperReportService {
 
                 styleBuilderParamsDtoList.add(styleBuilderMapper.mapToDto(styleBuilderDuplicate));
 
+                log.info("Previous Styling from table : StyleBuilderDuplicate");
+
             });
 
             multiTableColumnsResult.setStyleBuilderParamsList(styleBuilderParamsDtoList);
@@ -151,6 +169,7 @@ public class JasperReportServiceImpl implements JasperReportService {
         Map map = multiTableColumnsResult.getRows().get(1);
 
         if(multiTableColumnsResult.getStyleBuilderParamsList().isEmpty()){
+            log.error("jasper report styling params are not passed");
             throw new EmployeeException("jasper report styling params are not passed");
         }
 
@@ -168,12 +187,16 @@ public class JasperReportServiceImpl implements JasperReportService {
         });
 
         if(columnStyle.getPdfTitle()!= PdfTitle.COLUMN ){
+            log.error("styling params are not given for COLUMNS");
             throw new EmployeeException("styling params are not given for COLUMNS");
         } else if (headerStyle.getPdfTitle()!=PdfTitle.HEADER) {
+            log.error("styling params are not given for HEADER");
             throw new EmployeeException("styling params are not given for HEADER");
         } else if (titleStyle.getPdfTitle()!=PdfTitle.TITLE) {
+            log.error("styling params are not given for TITLE");
             throw new EmployeeException("styling params are not given for TITLE");
         }else if (subTitleStyle.getPdfTitle() !=PdfTitle.SUBTITLE){
+            log.error("styling params are not given for SUBTITLE");
             throw new EmployeeException("styling params are not given for SUBTITLE");
         }
 
@@ -189,6 +212,8 @@ public class JasperReportServiceImpl implements JasperReportService {
 
             report.addColumn(columnState);
         });
+
+        log.info("The column Headers and its Properties are added to report");
 
         report.setTitle(multiTableColumnsResult.getTitleName());
         report.setTitleStyle(createStyle.apply(titleStyle));
@@ -210,6 +235,7 @@ public class JasperReportServiceImpl implements JasperReportService {
                 AutoText.ALIGNMENT_CENTER,200,reportHeaderStyle.apply(columnStyle));
         report.setUseFullPageWidth(true);
         report.addImageBanner("D:\\New\\Jsw_Steel.png",50,50, ImageBanner.Alignment.Right, ImageScaleMode.FILL_PROPORTIONALLY);
+        log.info("All the Properties are added to report");
         return report.build();
     }
 
@@ -241,7 +267,7 @@ public class JasperReportServiceImpl implements JasperReportService {
             sb.setBackgroundColor(Color.orange);
         }
 
-
+        log.info("All the styling properties are added to title : "+styleBuilderParams.getPdfTitle());
         return sb;
     }
 }

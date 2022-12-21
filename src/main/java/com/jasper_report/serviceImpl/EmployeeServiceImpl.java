@@ -9,6 +9,7 @@ import com.jasper_report.mapper.StyleBuilderMapper;
 import com.jasper_report.model.Enum.PdfTitle;
 import com.jasper_report.repository.*;
 import com.jasper_report.service.EmployeeService;
+import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @PropertySource(value={"classpath:application.properties"})
+@Log4j2
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Value("${spring.datasource.url:}")
@@ -71,11 +73,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<String> entitiesList=commonRepository.findSchemaTables(commonService.convertToDatabaseName(schemaName));
 
         if(entitiesList.isEmpty()){
+            log.error("In Schema  "+schemaName+" Tables are not found, pls add");
             throw new EmployeeException("In Schema  "+schemaName+" Tables are not found, pls add");
         }
 
         Entities entities=new Entities();
         entities.setEntities(commonService.rename(entitiesList));
+
+        log.info("The entity list is fetched from the schema : "+ schemaName);
 
         return entities;
     }
@@ -93,6 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         int count = rsmd.getColumnCount();
 
         if(count == 0 ){
+            log.error("Columns not found for table : "+tableName+" and schemaName : "+schemaName);
             throw new EmployeeException("Columns not found for table : "+tableName+" and schemaName : "+schemaName);
         }
 
@@ -103,12 +109,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             if(childTableName == null) {
 
+                log.info("Entity Property : "+rsmd.getColumnLabel(i)+"is added to Entity :"+tableName);
                 entityProperties.add(
                         entityPropertyMapper.map(rsmd.getColumnLabel(i),rsmd.getColumnClassName(i),
                                commonService.rename(rsmd.getColumnLabel(i))));
 
             }else {
                 childTableNames.add(commonService.rename(childTableName));
+                log.info("Child Table : "+childTableName+"is added to Entity :"+tableName);
             }
 
         }
@@ -124,6 +132,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Map> finalRows = new ArrayList<>();
 
         if(multiTableColumnsParams.getEntityList().isEmpty()){
+            log.error("Passing Entity list as empty");
             throw new EmployeeException("Passing Entity list as empty");
         }
 
@@ -137,8 +146,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         multiTableColumnsParams.getEntityList().stream().forEach(entity ->{
 
             if(entity.getEntityPropertyList().isEmpty()){
-                throw new EmployeeException("Entity Property is empty, pls add entityProperties to Entity: "
-                        +entity.getTableName());
+                log.error("Entity Property is empty, pls add entityProperties to Entity: "+entity.getTableName());
+                throw new EmployeeException("Entity Property is empty, pls add entityProperties to Entity: "+entity.getTableName());
             }
 
             String aliasName= commonService.convertToDatabaseName(entity.getTableName());
@@ -148,6 +157,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 columnHeaders.add(entityProperty.getColumnName());
 
                 if(entityProperty.getColumnName().isEmpty()){
+                    log.error("pls Add column Name for a Table Name : "+entity.getTableName());
                     throw new EmployeeException("pls Add column Name for a Table Name : "+entity.getTableName());
                 }
 
@@ -164,9 +174,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 String primaryKey=commonRepository.getPrimaryKey(aliasName);
 
                 if(primaryKey.isEmpty()){
+                    log.error("Primary key not found for table : "+ entity.getTableName());
                     throw  new EmployeeException("Primary key not found for table : "+ entity.getTableName());
                 }
 
+                log.info("Primary Key found for table : "+entity.getTableName());
                 String sqlString = "LEFT JOIN " + commonService.convertToDatabaseName(entity.getSchemaName())
                         +"."+aliasName + " As " + aliasName + " ON master." + primaryKey + "=" + aliasName + "." + primaryKey + " ";
 
@@ -179,11 +191,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         sql.set(sql.get() +" from " +schemaName+"."+mainTable+ " As master " + join.get());
 
-        System.out.println(sql.get());
+        log.info(sql.get());
 
         List<Object[]> queryResultList =commonRepository.getSelectedColumns(entityManager,sql.get());
 
         if(queryResultList.isEmpty()){
+            log.error("The Data is empty in database, pls add some data at schema : "+schemaName +" tableName : "+mainTable);
             throw  new EmployeeException("The Data is empty in database, pls add some data at schema : "+schemaName
             +" tableName : "+mainTable);
         }
@@ -202,6 +215,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 }
         );
 
+        log.info("columnsHeaders and Rows are formed for the jasper_report");
+
         MultiTableColumnsResult multiTableColumnsResult= multiTableColumnsResultMapper.mapToResult(
                 multiTableColumnsParams.getFileName(),multiTableColumnsParams.getReportHeader(),
                 multiTableColumnsParams.getDescription(),multiTableColumnsParams.getSubject(),
@@ -211,7 +226,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         multiTableColumnsResult.setRows(finalRows);
         multiTableColumnsResult.setStyleBuilderParamsList(multiTableColumnsParams.getStyleBuilderParamsList());
 
+        log.info("The multiTableColumnsResult param is prepared for the generator jasper_report Method");
+
         String path=jasperReportService.getReport(recentStyle,multiTableColumnsResult);
+
+        log.info("The file is generated at path : "+path);
 
         return path;
     }
@@ -224,10 +243,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<String> schemaNames=commonRepository.findSchemas();
 
         if(schemaNames.isEmpty()){
+            log.error("There is no schemas found in your base, pls add schemas");
             throw new EmployeeException("There is no schemas found in your base, pls add schemas");
         }
 
         schemas.setSchemaName(commonService.rename(schemaNames));
+
+        log.info("The schemas are fetched from database");
 
         return schemas;
     }
@@ -238,6 +260,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Entity> entityList = new ArrayList<>();
 
         if(tableNames.isEmpty()){
+            log.error("TableNames List is empty, pls add some table names");
             throw  new EmployeeException("TableNames List is empty, pls add some table names");
         }
 
@@ -250,6 +273,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
 
         });
+
+        log.info("The Entity Property and child Tables are fetched for the multiple tables");
 
         return entityList;
     }

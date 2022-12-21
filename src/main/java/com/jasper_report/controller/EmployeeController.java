@@ -2,10 +2,17 @@ package com.jasper_report.controller;
 
 
 import com.jasper_report.dto.MultiTableColumnsParams;
+import com.jasper_report.model.Employee;
 import com.jasper_report.service.JasperReportService;
 import com.jasper_report.service.EmployeeService;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,47 +34,85 @@ public class EmployeeController {
     private JasperReportService jasperReportService;
 
     @GetMapping(value = "/{schemaName}/entityList")
-    public ResponseEntity<?> getTablesList(@RequestParam String schemaName) throws Exception {
+    @Operation(summary = "To fetch list of tables in a particular schema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the Tables"),
+            @ApiResponse(responseCode = "400", description = "Invalid Schema",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Tables are not found in the mentioned schema",
+                    content = @Content) })
+    public ResponseEntity<?> getTablesList(@Parameter(description = "schemaName of database from which tables has to fetch") @RequestParam String schemaName) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTablesList(schemaName), HttpStatus.OK);
-        log.info("Table Data fetched successfully");
+        log.info("All the tables are fetched from schema :"+ schemaName);
         return response;
 
     }
 
     @GetMapping(value = "/{schemaName}/{tableName}")
-    public ResponseEntity<?> getTableColumnsAndChildTables(@RequestParam String schemaName,@RequestParam String tableName) throws Exception {
+    @Operation(summary = "To fetch Entity Properties and child Tables in a particular schema of a particular Entity")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the Entity Properties and Child Tables"),
+            @ApiResponse(responseCode = "400", description = "Invalid Entity/Table",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not Found the Entity Properties and Child Tables",
+                    content = @Content) })
+    public ResponseEntity<?> getTableColumnsAndChildTables(@Parameter(description = "schemaName of database")@RequestParam String schemaName,
+                                                           @Parameter(description = "tableName of schema ")@RequestParam String tableName) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTableColumnsAndChildTables(schemaName,tableName), HttpStatus.OK);
-        log.info("Table columns Data fetched successfully");
+        log.info("Table Columns and child Tables Data fetched successfully for the table : "+tableName);
         return response;
 
     }
 
     @GetMapping(value = "/{recentStyle}")
-    public ResponseEntity<?> getJasperReport(@RequestParam boolean recentStyle,@RequestBody MultiTableColumnsParams multiTableColumnsParams) throws Exception {
+    @Operation(summary = "To generate Jasper_report for the selected columns")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Jasper_Report is Generated"),
+            @ApiResponse(responseCode = "400", description = "Jasper_Report is not Generated",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Jasper_Report is not Generated",
+                    content = @Content) })
+    public ResponseEntity<?> getJasperReport(@Parameter(description = "Previous Styling's of report") @RequestParam boolean recentStyle,
+                                             @RequestBody MultiTableColumnsParams multiTableColumnsParams) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getJasperReport(recentStyle,multiTableColumnsParams), HttpStatus.OK);
-        log.info("Table columns Data fetched successfully");
+        log.info("Jasper_Report Generated Successfully");
         return response;
 
     }
 
     @GetMapping(value = "/{schemaName}")
-    public ResponseEntity<?> getMultipleTableColumnsAndChildTables(@RequestParam String schemaName, @RequestBody List<String> tableNames) throws Exception {
+    @Operation(summary = "To fetch Multiple Entity Properties and child Tables in a particular schema of a Multiple Entity")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the Multiple Entity Properties and Child Tables"),
+            @ApiResponse(responseCode = "400", description = "Invalid Entity/Table Name",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not Found the Multiple Entity Properties and Child Tables",
+                    content = @Content) })
+    public ResponseEntity<?> getMultipleTableColumnsAndChildTables(@Parameter(description = "SchemaName of database")@RequestParam String schemaName,
+                                                                   @Parameter(description = "List of Tables of Schema") @RequestBody List<String> tableNames) throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getMultipleTableColumnsAndChildTables(schemaName,tableNames),
                 HttpStatus.OK);
-        log.info("Multiple Table columns Data fetched successfully");
+        log.info("Table Columns and child Tables Data fetched successfully for the given Multiple Tables ");
         return response;
 
     }
 
     @GetMapping(value = "/")
+    @Operation(summary = "To fetch list of schemas in a database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of schemas was fetched"),
+            @ApiResponse(responseCode = "400", description = "No schemas found at database",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Database connection",
+                    content = @Content) })
     public ResponseEntity<?> getSchemas() throws Exception {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getSchemas(), HttpStatus.OK);
-        log.info("Multiple Table columns Data fetched successfully");
+        log.info("Schemas are fetched successfully for the database");
         return response;
 
     }
