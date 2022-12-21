@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+/**
+ * This controller consists of several Methods which helps to generate Jasper_Report
+ */
 @RestController
 @RequestMapping("/employee")
 @Log4j2
@@ -33,6 +35,9 @@ public class EmployeeController {
     @Autowired
     private JasperReportService jasperReportService;
 
+    /**
+     *This controller Method is used to fetch the list of tables in a particular schema
+     */
     @GetMapping(value = "/{schemaName}/entityList")
     @Operation(summary = "To fetch list of tables in a particular schema")
     @ApiResponses(value = {
@@ -49,6 +54,9 @@ public class EmployeeController {
 
     }
 
+    /**
+     *This controller Method is used to fetch the list of columns and child Tables in a particular Table of a particular schema
+     */
     @GetMapping(value = "/{schemaName}/{tableName}")
     @Operation(summary = "To fetch Entity Properties and child Tables in a particular schema of a particular Entity")
     @ApiResponses(value = {
@@ -66,6 +74,10 @@ public class EmployeeController {
 
     }
 
+    /**
+     *This controller Method is used to fetch the data of selected columns from the database
+     * And also generates Jasper_Report with this data
+     */
     @GetMapping(value = "/{recentStyle}")
     @Operation(summary = "To generate Jasper_report for the selected columns")
     @ApiResponses(value = {
@@ -83,6 +95,9 @@ public class EmployeeController {
 
     }
 
+    /**
+     *This controller Method is used to fetch the list of columns and child Tables for Multiple Tables of a particular schema
+     */
     @GetMapping(value = "/{schemaName}")
     @Operation(summary = "To fetch Multiple Entity Properties and child Tables in a particular schema of a Multiple Entity")
     @ApiResponses(value = {
@@ -101,6 +116,9 @@ public class EmployeeController {
 
     }
 
+    /**
+     * This controller Method is used to fetch the list of schemas in database
+     */
     @GetMapping(value = "/")
     @Operation(summary = "To fetch list of schemas in a database")
     @ApiResponses(value = {

@@ -22,7 +22,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-
+/**
+ * This EmployeeServiceImpl Class consists of several Methods which helps to generate Jasper_Report
+ */
 @Service
 @PropertySource(value={"classpath:application.properties"})
 @Log4j2
@@ -67,9 +69,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private MultiTableColumnsResultMapper multiTableColumnsResultMapper;
 
+    /**
+     * This Method takes input as SchemaName
+     * returns list of tables in that schema
+     */
     @Override
     public Entities getTablesList(String schemaName) {
 
+        /**
+         * Converting the variable(schemaName) in to database name
+         * Query->(findSchemaTables),fetch the list of tables in the given schema
+         */
         List<String> entitiesList=commonRepository.findSchemaTables(commonService.convertToDatabaseName(schemaName));
 
         if(entitiesList.isEmpty()){
@@ -77,6 +87,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeException("In Schema  "+schemaName+" Tables are not found, pls add");
         }
 
+        /**
+         * Creating Entity object and storing the query result list in the object
+         */
         Entities entities=new Entities();
         entities.setEntities(commonService.rename(entitiesList));
 
@@ -85,6 +98,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return entities;
     }
 
+    /**
+     *This Method takes input as (schemaName,tableName)
+     * returns the (columns, childTables) for the given table (tableName)
+     */
     @Override
     public Entity getTableColumnsAndChildTables(String schemaName,String tableName) throws SQLException {
 
@@ -92,6 +109,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         List childTableNames = new ArrayList();
 
+        /**
+         * Converting the variables(schemaName,tableName) in to database names
+         * Query->(getMetaData),fetch the list of columns in the given table (tableName)
+         */
         ResultSetMetaData rsmd =commonRepository.getMetaData(databaseUrl,username,password,
                 commonService.convertToDatabaseName(schemaName),commonService.convertToDatabaseName(tableName));
 
@@ -102,8 +123,17 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeException("Columns not found for table : "+tableName+" and schemaName : "+schemaName);
         }
 
+        /**
+         * Iterating the query result list (rsmd)
+         */
         for(int i=1;i <= count;i++){
 
+            /**
+             * Converting the variable(tableName) in to database name
+             * Query->(findChildTableName),fetch the childTableName in the given table (tableName)
+             * if childName is null than the particular column is Property to the table (tableName)
+             * if childName is not null than the particular column is childTable to the table (tableName)
+             */
             String childTableName = commonRepository.findChildTableName(rsmd.getColumnLabel(i),
                     commonService.convertToDatabaseName(tableName));
 
@@ -121,10 +151,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         }
 
+        /**
+         * Passing the variables to map method which consists in EntityMapper Interface
+         * Returns the Entity Object
+         */
         return entityMapper.map(schemaName,commonService.rename(tableName),
                 entityProperties,childTableNames);
     }
 
+    /**
+     *This Method takes input as (recentStyle,multiTableColumnsParams)
+     * returns the (Path) where the Jasper_Report is generated
+     */
     @Override
     public String getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException {
 
@@ -136,13 +174,23 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeException("Passing Entity list as empty");
         }
 
+        /**
+         * converting the variables(tableName,schemaName) in to database names
+         * Storing in the variables(mainTable,schemaName)
+         */
        String mainTable= commonService.convertToDatabaseName( multiTableColumnsParams.getEntityList().get(0).getTableName() );
        String schemaName=commonService.convertToDatabaseName(multiTableColumnsParams.getEntityList().get(0).getSchemaName() );
 
+        /**
+         * The variables(sql,join) are used to construct a query
+         */
         AtomicReference<String> sql = new AtomicReference<>("select ");
         AtomicReference<String> join = new AtomicReference<>(" ");
 
 
+        /**
+         * Iterating the Entity List
+         */
         multiTableColumnsParams.getEntityList().stream().forEach(entity ->{
 
             if(entity.getEntityPropertyList().isEmpty()){
@@ -150,8 +198,16 @@ public class EmployeeServiceImpl implements EmployeeService {
                 throw new EmployeeException("Entity Property is empty, pls add entityProperties to Entity: "+entity.getTableName());
             }
 
+            /**
+             * Variable (aliasName) is the aliasName for the TableName
+             */
             String aliasName= commonService.convertToDatabaseName(entity.getTableName());
 
+            /**
+             * Iterating the entity properties
+             * columnNames are stored in columnHeaders list which helps for jasper report columnHeaders
+             * Concatenating columnNames in sql String
+             */
             entity.getEntityPropertyList().stream().forEach(entityProperty -> {
 
                 columnHeaders.add(entityProperty.getColumnName());
@@ -169,6 +225,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             });
 
+            /**
+             * Here Fetching the PrimaryKey for the table using query->(getPrimaryKey)
+             * PrimaryKey is used for the join queries
+             * Building Query using variables (sql ,join)
+             */
             if(entity.getOrder() !=1 ) {
 
                 String primaryKey=commonRepository.getPrimaryKey(aliasName);
@@ -189,10 +250,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         sql.set(sql.get().substring(0,sql.toString().length()-1));
 
+        /**
+         * Finally Building of query is completed by using variables (sql ,join)
+         */
         sql.set(sql.get() +" from " +schemaName+"."+mainTable+ " As master " + join.get());
 
         log.info(sql.get());
 
+        /**
+         * method->(getSelectedColumns)
+         * input -> (entityManager, sql-(query in string format) )
+         * output ->fetch the data of selected columns from multiple tables
+         */
         List<Object[]> queryResultList =commonRepository.getSelectedColumns(entityManager,sql.get());
 
         if(queryResultList.isEmpty()){
@@ -201,6 +270,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             +" tableName : "+mainTable);
         }
 
+        /**
+         * The variable(queryResultList) is iterating
+         * Mapping columnHeaders and result data, ANd finally storing variable(finalRows)
+         * The variable(finalRows) is uses in jasper_report generation while mapping data to the Headers of the report
+         */
         queryResultList.stream().forEach(objects -> {
 
                     Map<String, Object> mapObject = new HashMap<>();
@@ -217,6 +291,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         log.info("columnsHeaders and Rows are formed for the jasper_report");
 
+        /**
+         * Preparing Object(multiTableColumnsResult) by setting all the required fields
+         * This Object(multiTableColumnsResult) is a parameter to the Method (getReport)
+         */
         MultiTableColumnsResult multiTableColumnsResult= multiTableColumnsResultMapper.mapToResult(
                 multiTableColumnsParams.getFileName(),multiTableColumnsParams.getReportHeader(),
                 multiTableColumnsParams.getDescription(),multiTableColumnsParams.getSubject(),
@@ -228,6 +306,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         log.info("The multiTableColumnsResult param is prepared for the generator jasper_report Method");
 
+        /**
+         * Here calling the method(getReport) which generates the actual jasper_report
+         */
         String path=jasperReportService.getReport(recentStyle,multiTableColumnsResult);
 
         log.info("The file is generated at path : "+path);
@@ -235,11 +316,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         return path;
     }
 
+    /**
+     * This Method returns the schemas of a database
+     */
     @Override
     public Schemas getSchemas() {
 
         Schemas schemas=new Schemas();
 
+        /**
+         * query->(findSchemas) fetch the schemas from the database
+         * Renaming the schemaNames using the Method (rename)
+         */
         List<String> schemaNames=commonRepository.findSchemas();
 
         if(schemaNames.isEmpty()){
@@ -254,6 +342,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return schemas;
     }
 
+    /**
+     * input variables(schemaName, tableNames)
+     *  returns the (columns, childTables) for the Multiple tables (tableNames)
+     */
     @Override
     public List<Entity> getMultipleTableColumnsAndChildTables(String schemaName,List<String> tableNames) {
 
@@ -264,6 +356,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw  new EmployeeException("TableNames List is empty, pls add some table names");
         }
 
+        /**
+         * Iterating the variable(tableNames)
+         * Calling Method(getTableColumnsAndChildTables), this method returns the (columns, childTables) for the given table (tableName)
+         * Adding the above Method result in entityList
+         * Return the variable(entityList) which contains (columns, childTables) for the Multiple tables
+         */
         tableNames.stream().forEach(tableName -> {
 
             try {

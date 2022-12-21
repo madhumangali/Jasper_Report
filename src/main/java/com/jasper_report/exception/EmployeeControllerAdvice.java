@@ -8,8 +8,11 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.Instant;
 
+/**
+ * This class is Global_Exception_Handler
+ * This class handles each and every exception which has thrown any exception from any corner of the Program
+ */
 @ControllerAdvice
 public class EmployeeControllerAdvice {
 
