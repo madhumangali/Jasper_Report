@@ -2,7 +2,6 @@ package com.jasper_report.controller;
 
 
 import com.jasper_report.dto.MultiTableColumnsParams;
-import com.jasper_report.model.Employee;
 import com.jasper_report.service.JasperReportService;
 import com.jasper_report.service.EmployeeService;
 
@@ -10,7 +9,6 @@ import com.jasper_report.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**

@@ -6,8 +6,10 @@ import ar.com.fdvs.dj.domain.*;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DynamicReportBuilder;
+import ar.com.fdvs.dj.domain.builders.StyleBuilder;
 import ar.com.fdvs.dj.domain.constants.*;
 import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.Transparency;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import com.jasper_report.dto.MultiTableColumnsResult;
 import com.jasper_report.dto.StyleBuilderParamsDto;
@@ -41,7 +43,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-
+/**
+ * This JasperReportServiceImpl Class consists of several Methods which helps to generate Jasper_Report
+ */
 @Service
 @Log4j2
 public class JasperReportServiceImpl implements JasperReportService {
@@ -58,6 +62,10 @@ public class JasperReportServiceImpl implements JasperReportService {
 
     StyleBuilderParamsDto headerStyle = null,columnStyle=null,titleStyle=null,subTitleStyle=null;
 
+    /**
+     * Input params (recentStyle, multiTableColumnsResult)
+     * Returns Path where JasperReport Generated
+     */
     public String getReport(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException,  JRException, ClassNotFoundException {
 
         if(multiTableColumnsResult.getFileName() == null)
@@ -66,19 +74,42 @@ public class JasperReportServiceImpl implements JasperReportService {
             throw  new EmployeeException("File Name should not be null/missed");
         }
 
+        /**
+         * Setting jasper_report file Name by using reference variableName ( multiTableColumnsResult.getFileName() )
+         * Generating filePath where the report has to be Generated
+         */
         String filePath = "D:\\New\\"+multiTableColumnsResult.getFileName()+".pdf";
 
+        /**
+         * Calling Method(getJasperReport) and will get DynamicReport in return
+         */
         DynamicReport dynaReport = getJasperReport(recentStyle,multiTableColumnsResult);
 
+        /**
+         * Calling Method(generateJasperPrint) by passing input variables(dynamicReport,ClassicLayoutManager Object,
+         * dataSource of selected columns )
+         * This Method(generateJasperPrint) will print the data in the dynamic Report
+         * Calling Method(exportReportToPdfFile) by passing input variables(JasperPrint, filePath)
+         * This Method(exportReportToPdfFile) will convert dynamic report to pdf and generate Pdf in required path(filePath)
+         */
         JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dynaReport, new ClassicLayoutManager(),
                 new JRBeanCollectionDataSource(multiTableColumnsResult.getRows()));
         JasperExportManager.exportReportToPdfFile(jp, filePath);
 
+        /**
+         * if we don't want the previous Styling's of pdf than we are deleting the entire data in the table (StyleBuilderDuplicate)
+         */
         if(recentStyle == false) {
             log.info("The entire data was deleted from the table : StyleBuilderDuplicate");
             styleBuilderDuplicateRepository.deleteAll();
         }
 
+        /**
+         * Iterating the StyleBuilderParamsList
+         * storing the data of StyleBuilderParamsList in table(styleBuilderParams)
+         * if we are not using the previous Styling's of pdf than ,
+         * we are storing data of  the entire data of StyleBuilderParamsList in the table (StyleBuilderDuplicate)
+         */
         multiTableColumnsResult.getStyleBuilderParamsList().stream().forEach(param ->{
 
            StyleBuilderParams styleBuilderParams =styleBuilderMapper.mapToBuilderParams(param,multiTableColumnsResult.getTitleName(),
@@ -106,8 +137,16 @@ public class JasperReportServiceImpl implements JasperReportService {
         return "The Pdf Generated Path : "+filePath;
     }
 
+    /**
+     * FunctionInterface(createStyle) uses to create Style parameter uses for styling the DynamicReport
+     * input Variable(StyleBuilderParamsDto)
+     * Returns variable(Style)
+     * This FunctionInterface(createStyle) uses for styling the Variables(Header,Column,Title,SubTitle)
+     * calling Method(stylingProcedure) uses for setting the styleBuilderParams fields in suitable Style fields
+     */
     Function<StyleBuilderParamsDto,Style> createStyle = (styleBuilderParams) ->{
        Style sb = new Style();
+
         try {
             sb=stylingProcedure(styleBuilderParams,sb);
         } catch (Exception e) {
@@ -119,10 +158,16 @@ public class JasperReportServiceImpl implements JasperReportService {
         return sb;
     };
 
+    /**
+     * FunctionInterface(createStyle) uses to create Style parameter uses for styling the DynamicReport
+     * input Variable(StyleBuilderParamsDto)
+     * Returns variable(Style)
+     * This FunctionInterface(createStyle) uses only for styling the Variables(reportHeader, description)
+     */
     Function<StyleBuilderParamsDto,Style> reportHeaderStyle = (styleBuilderParams) ->{
 
-        Style sb = new Style();
-        sb.setPaddingTop(10);
+        StyleBuilder sb = new StyleBuilder(true);
+//        sb.setPaddingTop(10);
         sb.setHorizontalAlign(HorizontalAlign.CENTER);
         sb.setVerticalAlign(VerticalAlign.MIDDLE);
         sb.setBorderBottom(Border.PEN_1_POINT());
@@ -133,13 +178,23 @@ public class JasperReportServiceImpl implements JasperReportService {
 
         log.info("The Styling's are formed for : "+styleBuilderParams.getPdfTitle());
 
-        return sb;
+        return sb.build();
     };
 
+    /**
+     * The Method(getJasperReport) uses for the creation of Document(DynamicReport)
+     * Input Variables(recentStyle,multiTableColumnsResult)
+     * Returns Document(DynamicReport)
+     */
     private DynamicReport getJasperReport(boolean recentStyle,MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException, ClassNotFoundException {
 
         DynamicReportBuilder report = new DynamicReportBuilder();
 
+        /**
+         * if we want Previous Styling's of pdf ('i.e' recentStyle = true)
+         * Fetching the latest Styling's data from the table (styleBuilderDuplicate)
+         * if data is not present the Exception throws here
+         */
         if(recentStyle == true){
 
             List<StyleBuilderDuplicate> styleBuilderDuplicateList=styleBuilderDuplicateRepository.findAll();
@@ -151,6 +206,10 @@ public class JasperReportServiceImpl implements JasperReportService {
 
             List<StyleBuilderParamsDto> styleBuilderParamsDtoList=new ArrayList<>();
 
+            /**
+             * Iterating the fetched data from the table (styleBuilderDuplicate)
+             * Setting the data in the variable(multiTableColumnsResult) in our required form
+             */
             styleBuilderDuplicateList.stream().forEach(styleBuilderDuplicate -> {
 
                 multiTableColumnsResult.setTitleName(styleBuilderDuplicate.getTitleName());
@@ -173,7 +232,10 @@ public class JasperReportServiceImpl implements JasperReportService {
             throw new EmployeeException("jasper report styling params are not passed");
         }
 
-
+        /**
+         * Here the separating the styling's of  pdf based on PdfTitle
+         * Storing the separated style's in variables(headerStyle,columnStyle,titleStyle,subTitleStyle)
+         */
         multiTableColumnsResult.getStyleBuilderParamsList().stream().forEach(style ->{
             if(style.getPdfTitle().equals(PdfTitle.HEADER)) {
                 headerStyle = style;
@@ -185,23 +247,13 @@ public class JasperReportServiceImpl implements JasperReportService {
                 subTitleStyle=style;
             }
         });
-
-        if(columnStyle.getPdfTitle()!= PdfTitle.COLUMN ){
-            log.error("styling params are not given for COLUMNS");
-            throw new EmployeeException("styling params are not given for COLUMNS");
-        } else if (headerStyle.getPdfTitle()!=PdfTitle.HEADER) {
-            log.error("styling params are not given for HEADER");
-            throw new EmployeeException("styling params are not given for HEADER");
-        } else if (titleStyle.getPdfTitle()!=PdfTitle.TITLE) {
-            log.error("styling params are not given for TITLE");
-            throw new EmployeeException("styling params are not given for TITLE");
-        }else if (subTitleStyle.getPdfTitle() !=PdfTitle.SUBTITLE){
-            log.error("styling params are not given for SUBTITLE");
-            throw new EmployeeException("styling params are not given for SUBTITLE");
-        }
-
+        
         AtomicInteger indexTwo=new AtomicInteger(0);
 
+        /**
+         * Adding Headers (Styling's and Properties) and Columns Styling to the document(DynamicReport)
+         * Adding the Others required fields to document(DynamicReport)
+         */
         multiTableColumnsResult.getColumnHeaders().stream().forEach(columnHeader ->{
 
             AbstractColumn columnState = ColumnBuilder.getInstance()
@@ -215,14 +267,14 @@ public class JasperReportServiceImpl implements JasperReportService {
 
         log.info("The column Headers and its Properties are added to report");
 
-        report.setTitle(multiTableColumnsResult.getTitleName());
+        report.setTitle(multiTableColumnsResult.getTitleName()+ " :-");
         report.setTitleStyle(createStyle.apply(titleStyle));
-        report.setSubtitle(multiTableColumnsResult.getSubtitleName());
-        report.setSubtitleStyle(createStyle.apply(subTitleStyle));
+//        report.setSubtitle(multiTableColumnsResult.getSubtitleName());
+//        report.setSubtitleStyle(createStyle.apply(subTitleStyle));
         report.setReportName(multiTableColumnsResult.getReportHeader());
 
         Style style=new Style();
-        style.setBackgroundColor(Color.orange);
+        style.setBackgroundColor(Color.PINK);
         report.setOddRowBackgroundStyle(style);
         report.setPrintBackgroundOnOddRows(true);
         report.setMargins(20,20,20,20);
@@ -239,6 +291,11 @@ public class JasperReportServiceImpl implements JasperReportService {
         return report.build();
     }
 
+    /**
+     *The method(stylingProcedure) uses for setting the styleBuilderParams fields in suitable Style fields
+     * Input Params(styleBuilderParams,Style)
+     * Return Style
+     */
     public Style stylingProcedure(StyleBuilderParamsDto styleBuilderParams, Style sb) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         Field fieldFont=Font.class.getDeclaredField(styleBuilderParams.getFontStyles().toString());
@@ -262,10 +319,7 @@ public class JasperReportServiceImpl implements JasperReportService {
         Field fieldBackGround=Color.class.getDeclaredField(styleBuilderParams.getBackgroundColor().toString());
         sb.setBackgroundColor((Color) fieldBackGround.get(styleBuilderParams.getBackgroundColor().toString()));
 
-        if(styleBuilderParams.getPdfTitle().equals(PdfTitle.COLUMN)){
-            sb.setBorderTop(Border.PEN_1_POINT());
-            sb.setBackgroundColor(Color.orange);
-        }
+        sb.setTransparency(Transparency.OPAQUE);
 
         log.info("All the styling properties are added to title : "+styleBuilderParams.getPdfTitle());
         return sb;
