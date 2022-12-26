@@ -22,7 +22,6 @@ public class EmployeeException extends RuntimeException{
         super(cause);
     }
 
-
     protected EmployeeException(String message, Throwable cause,
                                 boolean enableSuppression,
                                 boolean writableStackTrace) {

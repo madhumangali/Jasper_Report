@@ -10,6 +10,7 @@ import ar.com.fdvs.dj.domain.builders.StyleBuilder;
 import ar.com.fdvs.dj.domain.constants.*;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.Transparency;
+import ar.com.fdvs.dj.domain.entities.Subreport;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import com.jasper_report.dto.MultiTableColumnsResult;
 import com.jasper_report.dto.StyleBuilderParamsDto;
@@ -167,15 +168,17 @@ public class JasperReportServiceImpl implements JasperReportService {
     Function<StyleBuilderParamsDto,Style> reportHeaderStyle = (styleBuilderParams) ->{
 
         StyleBuilder sb = new StyleBuilder(true);
-//        sb.setPaddingTop(10);
+
+        sb.setPaddingBottom(5);
         sb.setHorizontalAlign(HorizontalAlign.CENTER);
         sb.setVerticalAlign(VerticalAlign.MIDDLE);
         sb.setBorderBottom(Border.PEN_1_POINT());
-        sb.setBorderColor(Color.BLACK);
+        sb.setBorderColor(Color.RED);
         sb.setFont(Font.ARIAL_BIG_BOLD);
-        sb.setTextColor(Color.blue);
-        sb.setBackgroundColor(Color.PINK);
-
+        float[ ] bg=Color.RGBtoHSB(0, 0, 128,null);
+        sb.setTextColor(Color.getHSBColor(bg[0], bg[1], bg[2]));
+        sb.setBackgroundColor(Color.WHITE);
+        sb.setTransparency(Transparency.OPAQUE);
         log.info("The Styling's are formed for : "+styleBuilderParams.getPdfTitle());
 
         return sb.build();
@@ -188,8 +191,16 @@ public class JasperReportServiceImpl implements JasperReportService {
      */
     private DynamicReport getJasperReport(boolean recentStyle,MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException, ClassNotFoundException {
 
-        DynamicReportBuilder report = new DynamicReportBuilder();
-
+//        DynamicReportBuilder report = new DynamicReportBuilder();
+//
+//        DynamicReport dynamicReport=new DynamicReport();
+//
+//        dynamicReport
+//        Subreport subreport=new Subreport();
+//        subreport.setDynamicReport(dynamicReport);
+////        subreport.se
+//
+//        report.addConcatenatedReport(subreport);
         /**
          * if we want Previous Styling's of pdf ('i.e' recentStyle = true)
          * Fetching the latest Styling's data from the table (styleBuilderDuplicate)
@@ -247,7 +258,7 @@ public class JasperReportServiceImpl implements JasperReportService {
                 subTitleStyle=style;
             }
         });
-        
+
         AtomicInteger indexTwo=new AtomicInteger(0);
 
         /**
@@ -273,9 +284,6 @@ public class JasperReportServiceImpl implements JasperReportService {
 //        report.setSubtitleStyle(createStyle.apply(subTitleStyle));
         report.setReportName(multiTableColumnsResult.getReportHeader());
 
-        Style style=new Style();
-        style.setBackgroundColor(Color.PINK);
-        report.setOddRowBackgroundStyle(style);
         report.setPrintBackgroundOnOddRows(true);
         report.setMargins(20,20,20,20);
 
@@ -298,26 +306,32 @@ public class JasperReportServiceImpl implements JasperReportService {
      */
     public Style stylingProcedure(StyleBuilderParamsDto styleBuilderParams, Style sb) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        Field fieldFont=Font.class.getDeclaredField(styleBuilderParams.getFontStyles().toString());
+        Field fieldFont = Font.class.getDeclaredField(styleBuilderParams.getFontStyles().toString());
         sb.setFont((Font) fieldFont.get(styleBuilderParams.getFontStyles().toString()));
 
         Method method = Border.class.getDeclaredMethod(styleBuilderParams.getBorderStyle().toString());
-        sb.setBorder((Border) method.invoke(null,null));
+        sb.setBorder((Border) method.invoke(null, null));
 
-        Field fieldBorder=Color.class.getDeclaredField(styleBuilderParams.getBorderColor().toString());
+        Field fieldBorder = Color.class.getDeclaredField(styleBuilderParams.getBorderColor().toString());
         sb.setBorderColor((Color) fieldBorder.get(styleBuilderParams.getBorderColor().toString()));
 
-        Field fieldText=Color.class.getDeclaredField(styleBuilderParams.getTextColor().toString());
+        Field fieldText = Color.class.getDeclaredField(styleBuilderParams.getTextColor().toString());
         sb.setTextColor((Color) fieldText.get(styleBuilderParams.getTextColor().toString()));
 
-        Field fieldHorizontalAlign=HorizontalAlign.class.getDeclaredField(styleBuilderParams.getHorizontalAlignmentEnum().toString());
+        Field fieldHorizontalAlign = HorizontalAlign.class.getDeclaredField(styleBuilderParams.getHorizontalAlignmentEnum().toString());
         sb.setHorizontalAlign((HorizontalAlign) fieldHorizontalAlign.get(styleBuilderParams.getHorizontalAlignmentEnum().toString()));
 
-        Field fieldVerticalAlign=VerticalAlign.class.getDeclaredField(styleBuilderParams.getVerticalAlignmentEnum().toString());
+        Field fieldVerticalAlign = VerticalAlign.class.getDeclaredField(styleBuilderParams.getVerticalAlignmentEnum().toString());
         sb.setVerticalAlign((VerticalAlign) fieldVerticalAlign.get(styleBuilderParams.getVerticalAlignmentEnum().toString()));
 
-        Field fieldBackGround=Color.class.getDeclaredField(styleBuilderParams.getBackgroundColor().toString());
+        Field fieldBackGround = Color.class.getDeclaredField(styleBuilderParams.getBackgroundColor().toString());
         sb.setBackgroundColor((Color) fieldBackGround.get(styleBuilderParams.getBackgroundColor().toString()));
+
+        if (styleBuilderParams.getPdfTitle().equals(PdfTitle.HEADER)  ){
+            float[ ] bg=Color.RGBtoHSB(0, 0, 128,null);
+            sb.setBackgroundColor(Color.getHSBColor(bg[0], bg[1], bg[2]));
+          sb.setTextColor(Color.RED);
+         }
 
         sb.setTransparency(Transparency.OPAQUE);
 
