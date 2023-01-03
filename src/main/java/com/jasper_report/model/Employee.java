@@ -1,5 +1,6 @@
 package com.jasper_report.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

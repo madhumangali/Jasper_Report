@@ -6,8 +6,9 @@ import com.jasper_report.mapper.EntityMapper;
 import com.jasper_report.mapper.EntityPropertyMapper;
 import com.jasper_report.mapper.MultiTableColumnsResultMapper;
 import com.jasper_report.mapper.StyleBuilderMapper;
-import com.jasper_report.model.Enum.PdfTitle;
-import com.jasper_report.repository.*;
+import com.jasper_report.repository.CommonRepository;
+import com.jasper_report.repository.StyleBuilderDuplicateRepository;
+import com.jasper_report.repository.StyleBuilderRepository;
 import com.jasper_report.service.EmployeeService;
 import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -163,8 +165,8 @@ public class EmployeeServiceImpl implements EmployeeService {
      *This Method takes input as (recentStyle,multiTableColumnsParams)
      * returns the (Path) where the Jasper_Report is generated
      */
-    @Override
-    public String getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException {
+
+    public MultiTableColumnsResult getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException, IOException {
 
         List<String> columnHeaders=new ArrayList<>();
         List<Map> finalRows = new ArrayList<>();
@@ -313,7 +315,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         log.info("The file is generated at path : "+path);
 
-        return path;
+        return multiTableColumnsResult;
     }
 
     /**
@@ -376,6 +378,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return entityList;
     }
+
+//    @Override
+//    public String getJasperReport(boolean recentStyle, List<MultiTableColumnsParams> multiTableColumnsParams) throws JRException, ClassNotFoundException {
+//
+//        DynamicReport dynamicReport=
+//        multiTableColumnsParams.stream().forEach(param ->{
+//            try {
+//                getJasperReport(recentStyle,param);
+//            } catch (JRException e) {
+//                throw new RuntimeException(e);
+//            } catch (ClassNotFoundException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//        return null;
+//    }
 
 }
 

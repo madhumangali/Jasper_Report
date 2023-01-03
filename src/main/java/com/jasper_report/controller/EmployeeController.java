@@ -2,6 +2,7 @@ package com.jasper_report.controller;
 
 
 import com.jasper_report.dto.MultiTableColumnsParams;
+import com.jasper_report.dto.MultiTableColumnsResult;
 import com.jasper_report.service.JasperReportService;
 import com.jasper_report.service.EmployeeService;
 
@@ -17,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -131,6 +130,17 @@ public class EmployeeController {
 
         ResponseEntity<?> response = new ResponseEntity<>(employeeService.getSchemas(), HttpStatus.OK);
         log.info("Schemas are fetched successfully for the database");
+        return response;
+
+    }
+
+    /**
+     * This controller Method is used to print the multiple reports in a single page
+     */
+    @GetMapping(value = "/multiple/{recentStyle}")
+    public ResponseEntity<?> generateReport(@RequestParam boolean recentStyle, @RequestBody MultiTableColumnsResult multiTableColumnsResult) throws Exception {
+
+        ResponseEntity<?> response = new ResponseEntity<>(jasperReportService.multipleReports(recentStyle, multiTableColumnsResult), HttpStatus.OK);
         return response;
 
     }

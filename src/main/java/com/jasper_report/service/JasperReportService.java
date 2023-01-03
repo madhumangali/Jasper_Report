@@ -6,4 +6,6 @@ import net.sf.jasperreports.engine.JRException;
 public interface JasperReportService {
 
     String getReport(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws JRException, ClassNotFoundException;
+
+    String multipleReports(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws JRException, ClassNotFoundException;
 }

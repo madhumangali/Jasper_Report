@@ -4,6 +4,8 @@ package com.jasper_report.service;
 import com.jasper_report.dto.*;
 import net.sf.jasperreports.engine.JRException;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public interface EmployeeService {
 
     List<Entity> getMultipleTableColumnsAndChildTables(String schemaName,List<String> tableNames);
 
-    String getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException;
+    MultiTableColumnsResult getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException, IOException;
 
     Schemas getSchemas();
 }
