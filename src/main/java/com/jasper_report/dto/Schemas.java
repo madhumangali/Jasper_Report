@@ -11,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Schemas {
 
+    private String catalogName;
+
     private List<String> schemaName;
 
 }

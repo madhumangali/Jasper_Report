@@ -1,8 +1,8 @@
 package com.jasper_report.mapper;
 
 import com.jasper_report.dto.StyleBuilderParamsDto;
-import com.jasper_report.model.StyleBuilderDuplicate;
-import com.jasper_report.model.StyleBuilderParams;
+import com.jasper_report.model.domain.StyleBuilderDuplicate;
+import com.jasper_report.model.domain.StyleBuilderParams;
 import org.mapstruct.Mapper;
 
 @Mapper

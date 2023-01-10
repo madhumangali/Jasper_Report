@@ -6,6 +6,10 @@ server:
 spring:
   application:
     name: Jasper_Report
-#  profiles:
-#    active: local
-    
+  profiles:
+    active: local
+  datasource:
+    .hikari:
+  jdbc-url:
+
+

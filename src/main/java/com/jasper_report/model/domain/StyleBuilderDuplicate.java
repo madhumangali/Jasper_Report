@@ -1,4 +1,4 @@
-package com.jasper_report.model;
+package com.jasper_report.model.domain;
 
 import com.jasper_report.model.Enum.*;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,11 @@ import java.sql.Time;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(schema = "jasper_report")
+@Table(name = "Style_Builder_Duplicate",schema = "jasper_report")
 public class StyleBuilderDuplicate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_generator")
-    @SequenceGenerator(name = "employee_generator", sequenceName = "employee_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long styleDuplicateId;
 
     @Enumerated(value = EnumType.STRING)

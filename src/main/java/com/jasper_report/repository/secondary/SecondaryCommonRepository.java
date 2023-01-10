@@ -1,8 +1,6 @@
-package com.jasper_report.repository;
+package com.jasper_report.repository.secondary;
 
 import com.jasper_report.exception.EmployeeException;
-import com.jasper_report.model.Employee;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,15 +10,29 @@ import java.sql.*;
 import java.util.List;
 
 @Repository
-public interface CommonRepository extends JpaRepository<Employee,Long> {
+public interface SecondaryCommonRepository extends AddressRepository{
 
     @Query(value="select schema_name from information_schema.schemata where schema_name " +
             "NOT IN ('pg_toast','pg_catalog','information_schema')\n",nativeQuery = true)
     List<String> findSchemas();
 
-    @Query(value="SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' And " +
-            "table_schema= :schemaName",nativeQuery = true)
-    List<String> findSchemaTables(@Param("schemaName") String schemaName);
+    @Query(value="select catalog_name from information_schema.schemata where schema_name IN\n" +
+            "('pg_catalog')",nativeQuery = true)
+    String findCatalogName();
+
+    @Query(value = "SELECT table_name FROM information_schema.tables\n" +
+            "                      WHERE table_schema Not In ('pg_toast','pg_catalog','information_schema')",nativeQuery = true)
+    List<String> findTableNames();
+
+    @Query(value = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN (:tableName) ORDER BY ordinal_position ASC",nativeQuery = true)
+    List<String> findTableColumns(@Param("tableName") String tableName);
+
+    @Query(value = "SELECT table_schema FROM information_schema.tables\n" +
+            " WHERE table_name = :tableName ",nativeQuery = true)
+    String findSchemaForTable(@Param("tableName")String tableName);
+
+    @Query(value = "Select s from :schemaName . :tableName as s",nativeQuery = true)
+    List<Object[]> getData(@Param("schemaName")String schemaName, @Param("tableName") String tableName);
 
     @Query(value = "select table_name from INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
             "where column_name= :columnName and table_name!= :tableName " +

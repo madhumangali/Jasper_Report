@@ -1,4 +1,4 @@
-package com.jasper_report.model;
+package com.jasper_report.model.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +14,7 @@ import javax.persistence.*;
 public class Asset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_generator")
-    @SequenceGenerator(name = "employee_generator", sequenceName = "employee_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assetId")
     private long assetId;
 

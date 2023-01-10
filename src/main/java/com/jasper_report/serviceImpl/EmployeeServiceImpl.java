@@ -1,28 +1,43 @@
 package com.jasper_report.serviceImpl;
 
+
+import com.jasper_report.configuration.PrimaryConfiguration;
+import com.jasper_report.configuration.SecondaryConfiguration;
 import com.jasper_report.dto.*;
-import com.jasper_report.exception.EmployeeException;
 import com.jasper_report.mapper.EntityMapper;
 import com.jasper_report.mapper.EntityPropertyMapper;
 import com.jasper_report.mapper.MultiTableColumnsResultMapper;
 import com.jasper_report.mapper.StyleBuilderMapper;
-import com.jasper_report.repository.CommonRepository;
-import com.jasper_report.repository.StyleBuilderDuplicateRepository;
-import com.jasper_report.repository.StyleBuilderRepository;
+//import com.jasper_report.repository.secondary.SecondaryCommonRepository;
+//import com.jasper_report.repository.secondary.SecondaryCommonRepository;
+import com.jasper_report.repository.primary.PrimaryCommonRepository;
+import com.jasper_report.repository.secondary.SecondaryCommonRepository;
+import com.jasper_report.repository.primary.EmployeeRepository;
 import com.jasper_report.service.EmployeeService;
+import com.jasper_report.service.JasperReportService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.type.OrientationEnum;
+import net.sf.jasperreports.view.JasperViewer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
+import javax.persistence.Persistence;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * This EmployeeServiceImpl Class consists of several Methods which helps to generate Jasper_Report
@@ -30,31 +45,26 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 @PropertySource(value={"classpath:application.properties"})
 @Log4j2
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-
-    @Value("${spring.datasource.url:}")
-    private String databaseUrl;
-
-    @Value("${spring.datasource.username:}")
-    private String username;
-
-    @Value("${spring.datasource.password:}")
-    private String password;
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Autowired
     private StyleBuilderMapper styleBuilderMapper;
 
     @Autowired
-    private StyleBuilderRepository styleBuilderRepository;
+    private JasperReportService jasperReportService;
 
     @Autowired
-    private StyleBuilderDuplicateRepository styleBuilderDuplicateRepository;
+    private PrimaryConfiguration primaryConfiguration;
+
+   @Autowired
+    private SecondaryConfiguration secondaryConfiguration;
+
+   @Autowired
+   private SecondaryCommonRepository secondaryCommonRepository ;
 
     @Autowired
-    private JasperReportServiceImpl jasperReportService;
+    private PrimaryCommonRepository primaryCommonRepository;
 
     @Autowired
     private EntityPropertyMapper entityPropertyMapper;
@@ -62,8 +72,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EntityMapper entityMapper;
 
-    @Autowired
-    private CommonRepository commonRepository;
+//    @Autowired
+//    @Qualifier("entityManagerFactory")
+//    private EntityManager entityManager;
 
     @Autowired
     private CommonService commonService;
@@ -72,328 +83,123 @@ public class EmployeeServiceImpl implements EmployeeService {
     private MultiTableColumnsResultMapper multiTableColumnsResultMapper;
 
     /**
-     * This Method takes input as SchemaName
-     * returns list of tables in that schema
-     */
-    @Override
-    public Entities getTablesList(String schemaName) {
-
-        /**
-         * Converting the variable(schemaName) in to database name
-         * Query->(findSchemaTables),fetch the list of tables in the given schema
-         */
-        List<String> entitiesList=commonRepository.findSchemaTables(commonService.convertToDatabaseName(schemaName));
-
-        if(entitiesList.isEmpty()){
-            log.error("In Schema  "+schemaName+" Tables are not found, pls add");
-            throw new EmployeeException("In Schema  "+schemaName+" Tables are not found, pls add");
-        }
-
-        /**
-         * Creating Entity object and storing the query result list in the object
-         */
-        Entities entities=new Entities();
-        entities.setEntities(commonService.rename(entitiesList));
-
-        log.info("The entity list is fetched from the schema : "+ schemaName);
-
-        return entities;
-    }
-
-    /**
-     *This Method takes input as (schemaName,tableName)
-     * returns the (columns, childTables) for the given table (tableName)
-     */
-    @Override
-    public Entity getTableColumnsAndChildTables(String schemaName,String tableName) throws SQLException {
-
-        List<EntityProperty> entityProperties= new ArrayList<>();
-
-        List childTableNames = new ArrayList();
-
-        /**
-         * Converting the variables(schemaName,tableName) in to database names
-         * Query->(getMetaData),fetch the list of columns in the given table (tableName)
-         */
-        ResultSetMetaData rsmd =commonRepository.getMetaData(databaseUrl,username,password,
-                commonService.convertToDatabaseName(schemaName),commonService.convertToDatabaseName(tableName));
-
-        int count = rsmd.getColumnCount();
-
-        if(count == 0 ){
-            log.error("Columns not found for table : "+tableName+" and schemaName : "+schemaName);
-            throw new EmployeeException("Columns not found for table : "+tableName+" and schemaName : "+schemaName);
-        }
-
-        /**
-         * Iterating the query result list (rsmd)
-         */
-        for(int i=1;i <= count;i++){
-
-            /**
-             * Converting the variable(tableName) in to database name
-             * Query->(findChildTableName),fetch the childTableName in the given table (tableName)
-             * if childName is null than the particular column is Property to the table (tableName)
-             * if childName is not null than the particular column is childTable to the table (tableName)
-             */
-            String childTableName = commonRepository.findChildTableName(rsmd.getColumnLabel(i),
-                    commonService.convertToDatabaseName(tableName));
-
-            if(childTableName == null) {
-
-                log.info("Entity Property : "+rsmd.getColumnLabel(i)+"is added to Entity :"+tableName);
-                entityProperties.add(
-                        entityPropertyMapper.map(rsmd.getColumnLabel(i),rsmd.getColumnClassName(i),
-                               commonService.rename(rsmd.getColumnLabel(i))));
-
-            }else {
-                childTableNames.add(commonService.rename(childTableName));
-                log.info("Child Table : "+childTableName+"is added to Entity :"+tableName);
-            }
-
-        }
-
-        /**
-         * Passing the variables to map method which consists in EntityMapper Interface
-         * Returns the Entity Object
-         */
-        return entityMapper.map(schemaName,commonService.rename(tableName),
-                entityProperties,childTableNames);
-    }
-
-    /**
-     *This Method takes input as (recentStyle,multiTableColumnsParams)
-     * returns the (Path) where the Jasper_Report is generated
-     */
-
-    public MultiTableColumnsResult getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException, IOException {
-
-        List<String> columnHeaders=new ArrayList<>();
-        List<Map> finalRows = new ArrayList<>();
-
-        if(multiTableColumnsParams.getEntityList().isEmpty()){
-            log.error("Passing Entity list as empty");
-            throw new EmployeeException("Passing Entity list as empty");
-        }
-
-        /**
-         * converting the variables(tableName,schemaName) in to database names
-         * Storing in the variables(mainTable,schemaName)
-         */
-       String mainTable= commonService.convertToDatabaseName( multiTableColumnsParams.getEntityList().get(0).getTableName() );
-       String schemaName=commonService.convertToDatabaseName(multiTableColumnsParams.getEntityList().get(0).getSchemaName() );
-
-        /**
-         * The variables(sql,join) are used to construct a query
-         */
-        AtomicReference<String> sql = new AtomicReference<>("select ");
-        AtomicReference<String> join = new AtomicReference<>(" ");
-
-
-        /**
-         * Iterating the Entity List
-         */
-        multiTableColumnsParams.getEntityList().stream().forEach(entity ->{
-
-            if(entity.getEntityPropertyList().isEmpty()){
-                log.error("Entity Property is empty, pls add entityProperties to Entity: "+entity.getTableName());
-                throw new EmployeeException("Entity Property is empty, pls add entityProperties to Entity: "+entity.getTableName());
-            }
-
-            /**
-             * Variable (aliasName) is the aliasName for the TableName
-             */
-            String aliasName= commonService.convertToDatabaseName(entity.getTableName());
-
-            /**
-             * Iterating the entity properties
-             * columnNames are stored in columnHeaders list which helps for jasper report columnHeaders
-             * Concatenating columnNames in sql String
-             */
-            entity.getEntityPropertyList().stream().forEach(entityProperty -> {
-
-                columnHeaders.add(entityProperty.getColumnName());
-
-                if(entityProperty.getColumnName().isEmpty()){
-                    log.error("pls Add column Name for a Table Name : "+entity.getTableName());
-                    throw new EmployeeException("pls Add column Name for a Table Name : "+entity.getTableName());
-                }
-
-                if(entity.getOrder()==1){
-                    sql.set(sql.get()+entityProperty.getColumnName()+",");
-                }else {
-                        sql.set(sql.get()+aliasName+"."+entityProperty.getColumnName()+",");
-                }
-
-            });
-
-            /**
-             * Here Fetching the PrimaryKey for the table using query->(getPrimaryKey)
-             * PrimaryKey is used for the join queries
-             * Building Query using variables (sql ,join)
-             */
-            if(entity.getOrder() !=1 ) {
-
-                String primaryKey=commonRepository.getPrimaryKey(aliasName);
-
-                if(primaryKey.isEmpty()){
-                    log.error("Primary key not found for table : "+ entity.getTableName());
-                    throw  new EmployeeException("Primary key not found for table : "+ entity.getTableName());
-                }
-
-                log.info("Primary Key found for table : "+entity.getTableName());
-                String sqlString = "LEFT JOIN " + commonService.convertToDatabaseName(entity.getSchemaName())
-                        +"."+aliasName + " As " + aliasName + " ON master." + primaryKey + "=" + aliasName + "." + primaryKey + " ";
-
-                join.set(join.get() + sqlString);
-            }
-
-        });
-
-        sql.set(sql.get().substring(0,sql.toString().length()-1));
-
-        /**
-         * Finally Building of query is completed by using variables (sql ,join)
-         */
-        sql.set(sql.get() +" from " +schemaName+"."+mainTable+ " As master " + join.get());
-
-        log.info(sql.get());
-
-        /**
-         * method->(getSelectedColumns)
-         * input -> (entityManager, sql-(query in string format) )
-         * output ->fetch the data of selected columns from multiple tables
-         */
-        List<Object[]> queryResultList =commonRepository.getSelectedColumns(entityManager,sql.get());
-
-        if(queryResultList.isEmpty()){
-            log.error("The Data is empty in database, pls add some data at schema : "+schemaName +" tableName : "+mainTable);
-            throw  new EmployeeException("The Data is empty in database, pls add some data at schema : "+schemaName
-            +" tableName : "+mainTable);
-        }
-
-        /**
-         * The variable(queryResultList) is iterating
-         * Mapping columnHeaders and result data, ANd finally storing variable(finalRows)
-         * The variable(finalRows) is uses in jasper_report generation while mapping data to the Headers of the report
-         */
-        queryResultList.stream().forEach(objects -> {
-
-                    Map<String, Object> mapObject = new HashMap<>();
-                    AtomicInteger ordinal = new AtomicInteger(0);
-
-            columnHeaders.stream().forEach(column->{
-                mapObject.put( column,
-                        objects[ordinal.getAndIncrement()]);
-
-            });
-                    finalRows.add(mapObject);
-                }
-        );
-
-        log.info("columnsHeaders and Rows are formed for the jasper_report");
-
-        /**
-         * Preparing Object(multiTableColumnsResult) by setting all the required fields
-         * This Object(multiTableColumnsResult) is a parameter to the Method (getReport)
-         */
-        MultiTableColumnsResult multiTableColumnsResult= multiTableColumnsResultMapper.mapToResult(
-                multiTableColumnsParams.getFileName(),multiTableColumnsParams.getReportHeader(),
-                multiTableColumnsParams.getDescription(),multiTableColumnsParams.getSubject(),
-                multiTableColumnsParams.getTitleName(), multiTableColumnsParams.getSubtitleName());
-
-        multiTableColumnsResult.setColumnHeaders(columnHeaders);
-        multiTableColumnsResult.setRows(finalRows);
-        multiTableColumnsResult.setStyleBuilderParamsList(multiTableColumnsParams.getStyleBuilderParamsList());
-
-        log.info("The multiTableColumnsResult param is prepared for the generator jasper_report Method");
-
-        /**
-         * Here calling the method(getReport) which generates the actual jasper_report
-         */
-        String path=jasperReportService.getReport(recentStyle,multiTableColumnsResult);
-
-        log.info("The file is generated at path : "+path);
-
-        return multiTableColumnsResult;
-    }
-
-    /**
      * This Method returns the schemas of a database
      */
     @Override
-    public Schemas getSchemas() {
+    public List<Schemas> getSchemas() throws SQLException {
 
-        Schemas schemas=new Schemas();
+        List<Schemas> schemasList=new ArrayList<>();
 
-        /**
-         * query->(findSchemas) fetch the schemas from the database
-         * Renaming the schemaNames using the Method (rename)
-         */
-        List<String> schemaNames=commonRepository.findSchemas();
+        Schemas schemaOne=new Schemas();
+        schemaOne.setSchemaName(secondaryCommonRepository.findSchemas());
+        schemaOne.setCatalogName(secondaryCommonRepository.findCatalogName());
+        schemasList.add(schemaOne);
 
-        if(schemaNames.isEmpty()){
-            log.error("There is no schemas found in your base, pls add schemas");
-            throw new EmployeeException("There is no schemas found in your base, pls add schemas");
-        }
-
-        schemas.setSchemaName(commonService.rename(schemaNames));
+        Schemas schemaTwo=new Schemas();
+        schemaTwo.setSchemaName(primaryCommonRepository.findSchemas());
+        schemaTwo.setCatalogName(primaryCommonRepository.findCatalogName());
+        schemasList.add(schemaTwo);
 
         log.info("The schemas are fetched from database");
 
-        return schemas;
+        return schemasList;
     }
 
-    /**
-     * input variables(schemaName, tableNames)
-     *  returns the (columns, childTables) for the Multiple tables (tableNames)
-     */
     @Override
-    public List<Entity> getMultipleTableColumnsAndChildTables(String schemaName,List<String> tableNames) {
+    public String getDataOfTable(List<String> tableNamesList) throws SQLException, JRException {
 
-        List<Entity> entityList = new ArrayList<>();
+        List<JasperPrint> jasperPrints= new ArrayList<>();
 
-        if(tableNames.isEmpty()){
-            log.error("TableNames List is empty, pls add some table names");
-            throw  new EmployeeException("TableNames List is empty, pls add some table names");
-        }
+        AtomicInteger tableNamesListCount= new AtomicInteger(0);
 
-        /**
-         * Iterating the variable(tableNames)
-         * Calling Method(getTableColumnsAndChildTables), this method returns the (columns, childTables) for the given table (tableName)
-         * Adding the above Method result in entityList
-         * Return the variable(entityList) which contains (columns, childTables) for the Multiple tables
-         */
-        tableNames.stream().forEach(tableName -> {
+        tableNamesList.stream().forEach(tableName ->{
 
-            try {
-                entityList.add(getTableColumnsAndChildTables(schemaName,tableName));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+                jasperPrints.add(getDataAndReport.apply(tableName,250*tableNamesListCount.getAndIncrement() ));
+
+            System.out.println(jasperPrints.get(tableNamesListCount.get()-1).getBottomMargin());
+
 
         });
 
-        log.info("The Entity Property and child Tables are fetched for the multiple tables");
+        List<JasperPrint> partialJasperPrintList=new ArrayList<>();
 
-        return entityList;
+        AtomicInteger inc=new AtomicInteger(0);
+        AtomicInteger jasperPrintInc=new AtomicInteger(1);
+
+        for (JasperPrint jasperPrint: jasperPrints ) {
+
+            JasperPrint partialJasperPrint=new JasperPrint();
+
+            if(inc.get() == 0){
+                 partialJasperPrint = jasperPrints.get(jasperPrintInc.get());
+            }
+            else {
+                partialJasperPrint = partialJasperPrintList.get(inc.get()-1);
+            }
+
+            if (inc.get() % 2 != 0 && inc.get()>0) {
+                continue;
+            } else {
+
+                JRPrintPage page1 = partialJasperPrint.getPages().get(0);
+
+                List<JRPrintPage> pages2 = jasperPrint.getPages();
+                for (JRPrintPage page : pages2) {
+                    List<JRPrintElement> elements = page.getElements();
+                    for (JRPrintElement element : elements) {
+                        page1.addElement(element);
+                    }
+                }
+
+                JasperViewer.viewReport(partialJasperPrint,false);
+
+                partialJasperPrintList.add(jasperPrint);
+
+            }
+
+            inc.getAndIncrement();
+
+        }
+
+        int size= partialJasperPrintList.size();
+//        JasperViewer.viewReport(partialJasperPrintList.get(size-1),false);
+
+        String filePath = "D:\\New\\jsw.pdf";
+
+//        JasperExportManager.exportReportToPdfFile(partialJasperPrintList.get(size-1),filePath);
+
+        return  filePath;
+
     }
 
-//    @Override
-//    public String getJasperReport(boolean recentStyle, List<MultiTableColumnsParams> multiTableColumnsParams) throws JRException, ClassNotFoundException {
-//
-//        DynamicReport dynamicReport=
-//        multiTableColumnsParams.stream().forEach(param ->{
-//            try {
-//                getJasperReport(recentStyle,param);
-//            } catch (JRException e) {
-//                throw new RuntimeException(e);
-//            } catch (ClassNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//        return null;
-//    }
+    BiFunction<String, Integer,JasperPrint> getDataAndReport= (tableName, topMargin) ->{
+
+        try {
+            return jasperReport(commonService.primaryDatabaseFunction.apply(tableName),topMargin);
+        } catch (Exception e) {
+            try {
+                return jasperReport(commonService.secondaryDatabaseFunction.apply(tableName),topMargin);
+            } catch (JRException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+    };
+
+    public JasperPrint jasperReport(List<Map> list,int topMargin) throws JRException {
+
+       Set headers= list.get(0).keySet();
+
+       JasperPrint jasperPrint=jasperReportService.generateJasperReport(list,headers,topMargin);
+
+        JasperViewer.viewReport(jasperPrint,false);
+
+//        JasperPrint print= new JasperPrint();
+//        print.
+
+        return  jasperPrint;
+    }
+
 
 }
 
