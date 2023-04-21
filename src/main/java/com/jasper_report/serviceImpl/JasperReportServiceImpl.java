@@ -21,15 +21,20 @@ import com.jasper_report.model.StyleBuilderParams;
 import com.jasper_report.repository.StyleBuilderDuplicateRepository;
 import com.jasper_report.repository.StyleBuilderRepository;
 import com.jasper_report.service.JasperReportService;
+import com.lowagie.text.pdf.PdfWriter;
 import lombok.extern.log4j.Log4j2;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +43,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +72,7 @@ public class JasperReportServiceImpl implements JasperReportService {
      * Input params (recentStyle, multiTableColumnsResult)
      * Returns Path where JasperReport Generated
      */
-    public String getReport(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException,  JRException, ClassNotFoundException {
+    public String getReport(boolean recentStyle, MultiTableColumnsResult multiTableColumnsResult) throws ColumnBuilderException, JRException, ClassNotFoundException, FileNotFoundException {
 
         if(multiTableColumnsResult.getFileName() == null)
         {
@@ -92,9 +98,17 @@ public class JasperReportServiceImpl implements JasperReportService {
          * Calling Method(exportReportToPdfFile) by passing input variables(JasperPrint, filePath)
          * This Method(exportReportToPdfFile) will convert dynamic report to pdf and generate Pdf in required path(filePath)
          */
-        JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dynaReport, new ClassicLayoutManager(),
-                new JRBeanCollectionDataSource(multiTableColumnsResult.getRows()));
-        JasperExportManager.exportReportToPdfFile(jp, filePath);
+        JasperReport report = DynamicJasperHelper.generateJasperReport(
+                dynaReport, new ClassicLayoutManager(), new HashMap<>());
+
+        JasperPrint partialJasperPrint= JasperFillManager.fillReport(
+                report,new HashMap<>() ,new JRBeanCollectionDataSource(multiTableColumnsResult.getRows()));
+
+        log.info("filling the report was completed");
+
+        JasperExportManager.exportReportToPdfFile(partialJasperPrint, filePath);
+
+        log.info("pdf Generated");
 
         /**
          * if we don't want the previous Styling's of pdf than we are deleting the entire data in the table (StyleBuilderDuplicate)
@@ -269,16 +283,17 @@ public class JasperReportServiceImpl implements JasperReportService {
 
         report.setTitle(multiTableColumnsResult.getTitleName()+ " :-");
         report.setTitleStyle(createStyle.apply(titleStyle));
-//        report.setSubtitle(multiTableColumnsResult.getSubtitleName());
-//        report.setSubtitleStyle(createStyle.apply(subTitleStyle));
+
         report.setReportName(multiTableColumnsResult.getReportHeader());
 
         Style style=new Style();
         style.setBackgroundColor(Color.PINK);
         report.setOddRowBackgroundStyle(style);
         report.setPrintBackgroundOnOddRows(true);
+        report.setPageSizeAndOrientation(Page.Page_A4_Portrait());
         report.setMargins(20,20,20,20);
 
+//        report.
 //        report.setPageSizeAndOrientation(new Page(1000,1000));
 
         report.addAutoText(multiTableColumnsResult.getReportHeader(), AutoText.POSITION_HEADER,

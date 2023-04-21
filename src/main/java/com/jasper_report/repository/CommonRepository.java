@@ -39,6 +39,7 @@ public interface CommonRepository extends JpaRepository<Employee,Long> {
         ResultSet rs=stmt.executeQuery("select * from "+schemaName+"."+tableName);
         ResultSetMetaData resultSetMetaData = rs.getMetaData();
 
+
         return resultSetMetaData;
     }
 
@@ -52,5 +53,6 @@ public interface CommonRepository extends JpaRepository<Employee,Long> {
 
         return queryResultList;
     }
+
 
 }

@@ -14,13 +14,21 @@ import javax.persistence.*;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_generator")
-    @SequenceGenerator(name = "employee_generator", sequenceName = "employee_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "addressId")
     private long addressId;
 
     @Column(name = "houseNumber")
     private String houseNumber;
+
+    @Column(name="city")
+    private String city;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name= "pinCode")
+    private long pinCode;
 
 
 }

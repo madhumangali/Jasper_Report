@@ -17,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -134,20 +135,22 @@ public class EmployeeServiceImpl implements EmployeeService {
              * if childName is null than the particular column is Property to the table (tableName)
              * if childName is not null than the particular column is childTable to the table (tableName)
              */
+
             String childTableName = commonRepository.findChildTableName(rsmd.getColumnLabel(i),
                     commonService.convertToDatabaseName(tableName));
-
-            if(childTableName == null) {
-
-                log.info("Entity Property : "+rsmd.getColumnLabel(i)+"is added to Entity :"+tableName);
-                entityProperties.add(
-                        entityPropertyMapper.map(rsmd.getColumnLabel(i),rsmd.getColumnClassName(i),
-                               commonService.rename(rsmd.getColumnLabel(i))));
-
-            }else {
-                childTableNames.add(commonService.rename(childTableName));
-                log.info("Child Table : "+childTableName+"is added to Entity :"+tableName);
-            }
+            log.info(rsmd.getColumnLabel(i)+ "  "+childTableName);
+//
+//            if(childTableName == null) {
+//
+//                log.info("Entity Property : "+rsmd.getColumnLabel(i)+" is added to Entity :"+tableName);
+//                entityProperties.add(
+//                        entityPropertyMapper.map(rsmd.getColumnLabel(i),rsmd.getColumnClassName(i),
+//                               commonService.rename(rsmd.getColumnLabel(i))));
+//
+//            }else {
+//                childTableNames.add(commonService.rename(childTableName));
+//                log.info("Child Table : "+childTableName+"is added to Entity :"+tableName);
+//            }
 
         }
 
@@ -164,7 +167,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * returns the (Path) where the Jasper_Report is generated
      */
     @Override
-    public String getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException {
+    public String getJasperReport(boolean recentStyle,MultiTableColumnsParams multiTableColumnsParams) throws JRException, ClassNotFoundException, FileNotFoundException {
 
         List<String> columnHeaders=new ArrayList<>();
         List<Map> finalRows = new ArrayList<>();
@@ -234,7 +237,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                 String primaryKey=commonRepository.getPrimaryKey(aliasName);
 
-                if(primaryKey.isEmpty()){
+                if(primaryKey == null){
                     log.error("Primary key not found for table : "+ entity.getTableName());
                     throw  new EmployeeException("Primary key not found for table : "+ entity.getTableName());
                 }

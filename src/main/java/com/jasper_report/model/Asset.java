@@ -14,12 +14,17 @@ import javax.persistence.*;
 public class Asset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_generator")
-    @SequenceGenerator(name = "employee_generator", sequenceName = "employee_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assetId")
     private long assetId;
 
     @Column(name = "assetNumber")
     private int assetNumber;
+
+    @Column(name = "brand")
+    private String brand;
+
+    @Column(name = "location")
+    private String location;
 
 }
