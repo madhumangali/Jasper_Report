@@ -10,23 +10,23 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "asset", schema = "jasper_report")
-public class Asset {
+@Table(name = "AssetDetails", schema = "jasper_report")
+public class AssetDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_generator")
     @SequenceGenerator(name = "employee_generator", sequenceName = "employee_seq", allocationSize = 1)
-    @Column(name = "assetId")
-    private long assetId;
+    @Column(name = "assetDetailsId")
+    private long assetDetailsId;
 
-    @Column(name = "assetNumber")
-    private int assetNumber;
+    @Column(name = "brandName")
+    private int brandName;
 
-    @Column(name = "location")
-    private String location;
+    @Column(name = "ram")
+    private int ram;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assetDetailsId")
-    private AssetDetails assetDetails;
+    @Column(name = "modelName")
+    private int modelName;
 
 }
+

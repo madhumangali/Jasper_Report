@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +68,8 @@ public class EmployeeController {
     public ResponseEntity<?> getTableColumnsAndChildTables(@Parameter(description = "schemaName of database")@RequestParam String schemaName,
                                                            @Parameter(description = "tableName of schema ")@RequestParam String tableName) throws Exception {
 
-        ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTableColumnsAndChildTables(schemaName,tableName), HttpStatus.OK);
+//        ResponseEntity<?> response = new ResponseEntity<>(employeeService.getTableColumnsAndChildTables(schemaName,tableName), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(employeeService.getUml(schemaName,tableName), HttpStatus.OK);
         log.info("Table Columns and child Tables Data fetched successfully for the table : "+tableName);
         return response;
 

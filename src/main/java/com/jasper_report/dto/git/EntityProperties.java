@@ -1,5 +1,7 @@
-package com.jasper_report.dto;
+package com.jasper_report.dto.git;
 
+import com.jasper_report.dto.Entity;
+import com.jasper_report.dto.EntityProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +9,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Entity {
+@NoArgsConstructor
+public class EntityProperties {
 
     private String schemaName;
 
@@ -17,7 +19,7 @@ public class Entity {
 
     private List<EntityProperty> entityPropertyList;
 
-    private List<Entity> childTables;
+    private List<EntityProperties> childTables;
 
     private int order;
 

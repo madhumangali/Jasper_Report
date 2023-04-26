@@ -78,6 +78,26 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml -->
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>1.2022.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/guru.nidi/graphviz-java -->
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>0.18.1</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -137,6 +157,19 @@
             <version>1.5.2.Final</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
@@ -153,7 +186,6 @@
             <artifactId>DynamicJasper</artifactId>
             <version>5.3.6</version>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
         <dependency>
@@ -235,6 +267,13 @@
                 <configuration>
                     <source>9</source>
                     <target>9</target>
+                    <compilerArgs>
+                        <!-- Few examples ... only pick the ones needed -->
+<!--                        <arg>&#45;&#45;add-exports</arg> <arg>java.base/jdk.internal.misc=com.jigsaw.npe</arg>-->
+<!--                        <arg>&#45;&#45;add-exports</arg> <arg>java.base/jdk.internal.misc=ALL-UNNAMED</arg>-->
+                        <arg> --add-reads</arg> <arg> iamdsim.heat.adapter=ALL-UNNAMED</arg>
+
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>

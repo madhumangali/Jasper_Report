@@ -4,6 +4,7 @@ package com.jasper_report;
 import com.jasper_report.mapper.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
@@ -39,6 +40,21 @@ public class JasperReportApplication {
     @Bean
     public MultiTableColumnsResultMapper getMultiTableColumnsResultMapper() {
         return new MultiTableColumnsResultMapperImpl();
+    }
+
+    @Bean
+    public GitEntityMapper getGitEntityMapper() {
+        return new GitEntityMapperImpl();
+    }
+
+    @Bean
+    public GitEntityPropertiesMapper getGitEntityPropertiesMapper() {
+        return new GitEntityPropertiesMapperImpl();
+    }
+
+    @Bean
+    public GitSingleEntityMapper getGitSingleEntityMapper() {
+        return new GitSingleEntityMapperImpl();
     }
 
 }

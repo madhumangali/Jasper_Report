@@ -9,6 +9,6 @@ import java.util.List;
 @Mapper
 public interface EntityMapper {
 
-    Entity map(String schemaName,String tableName,List<EntityProperty> entityPropertyList,List<String> childTables);
+    Entity map(String schemaName,String tableName,List<EntityProperty> entityPropertyList,List<Entity> childTables);
 
 }

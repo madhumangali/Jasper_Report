@@ -21,5 +21,13 @@ public class Address {
     @Column(name = "houseNumber")
     private String houseNumber;
 
+    @Column(name="city")
+    private String city;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name= "pinCode")
+    private long pinCode;
 
 }
