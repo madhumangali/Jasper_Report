@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Crew_details" pageWidth="3370" pageHeight="2384" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="3370" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d619a4ff-d94e-4ed4-9d03-3ce7506bfe04">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Active"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#A6A6A6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#CFD1D4">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="Dataset1" uuid="789c3d1f-0678-4a8b-8197-446f5920f4bc">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Active"/>
+		<parameter name="min" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[1L]]></defaultValueExpression>
+		</parameter>
+		<parameter name="max" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[5L]]></defaultValueExpression>
+		</parameter>
+		<parameter name="DataSourceCollection" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
+		<queryString language="SQL">
+			<![CDATA[select kr_production_report_id,crew_details.* from  kr_production_report.kr_production_report as master
+LEFT JOIN kr_production_report.crew_details   as crew_details ON crew_details.crew_details_id = master.crew_details_id
+ where kr_production_report_id >=  '$P!{min}' and kr_production_report_id <=  '$P!{max}']]>
+		</queryString>
+		<field name="krOperator" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="kr_operator"/>
+			<property name="com.jaspersoft.studio.field.label" value="kr_operator"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="crew_details"/>
+		</field>
+		<field name="rankingOperator" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ranking_operator"/>
+			<property name="com.jaspersoft.studio.field.label" value="ranking_operator"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="crew_details"/>
+		</field>
+		<field name="shiftManager" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="shift_manager"/>
+			<property name="com.jaspersoft.studio.field.label" value="shift_manager"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="crew_details"/>
+		</field>
+	</subDataset>
+	<parameter name="min" class="java.lang.Long" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1L]]></defaultValueExpression>
+	</parameter>
+	<parameter name="max" class="java.lang.Long" isForPrompting="false">
+		<defaultValueExpression><![CDATA[20L]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DataSourceCollection" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="422" splitType="Stretch">
+			<componentElement>
+				<reportElement x="0" y="0" width="298" height="200" uuid="e8010cad-4b39-42ac-b67f-dcdab839dd69">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset1" uuid="97347b6f-edf6-4365-876b-d71ea2e6d606">
+						<datasetParameter name="min">
+							<datasetParameterExpression><![CDATA[$P{min}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="max">
+							<datasetParameterExpression><![CDATA[$P{max}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DataSourceCollection">
+							<datasetParameterExpression><![CDATA[$P{DataSourceCollection}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[$P{DataSourceCollection}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="100" uuid="5b1e56fc-6298-46ab-99fc-aaaa6cc2fd63">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="30" uuid="3b3b8b94-cc5c-493b-8132-acd0eb409359"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[shiftManager]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" uuid="54bc7b06-518e-4226-81bc-f97e39f24160"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{shiftManager}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="99" uuid="97fecc89-1f61-4cdc-97f8-1f1b1799298c">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="99" height="30" uuid="2b8cf151-db5a-4f51-9a9d-26e860346d77"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[krOperator]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="99" height="30" uuid="07b5d0f8-0615-4895-a443-79c0947f7805"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{krOperator}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="99" uuid="0f15835d-c418-4ae1-b94f-ba9cf07ade43">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="99" height="30" uuid="90646859-7065-4b64-8a8a-dc2c64362300"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[rankingOperator]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="99" height="30" uuid="2d7d1a12-f0aa-4387-9af6-bbfb534bb988"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{rankingOperator}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<subreport>
+				<reportElement x="298" y="0" width="200" height="200" uuid="318ea197-8a57-44f9-877c-bc521b151341"/>
+				<subreportParameter name="min">
+					<subreportParameterExpression><![CDATA[$P{min}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="max">
+					<subreportParameterExpression><![CDATA[$P{max}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DataSourceCollection">
+					<subreportParameterExpression><![CDATA[$P{DataSourceCollection}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["Process_time_details.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+</jasperReport>

@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="3370" pageHeight="2384" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2344" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="95679e5e-c636-4bf2-9a9d-545cb34f7d83">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Active"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<subDataset name="Dataset1" uuid="df100a01-cfce-4c00-bf73-03aab00d6fc6">
+		<parameter name="Parameter1" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="bcBayArrivalTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="bc_bay_arrival_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="bc_bay_arrival_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="dataTypeEntry" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="data_type_entry"/>
+			<property name="com.jaspersoft.studio.field.label" value="data_type_entry"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="impellerRefractSupplier" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="impeller_refract_supplier"/>
+			<property name="com.jaspersoft.studio.field.label" value="impeller_refract_supplier"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="reTreatment" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="re_treatment"/>
+			<property name="com.jaspersoft.studio.field.label" value="re_treatment"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="treatCounter" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="treat_counter"/>
+			<property name="com.jaspersoft.studio.field.label" value="treat_counter"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="remarks" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="remarks"/>
+			<property name="com.jaspersoft.studio.field.label" value="remarks"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="treatment_details"/>
+		</field>
+		<field name="krCycleTime" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.name" value="kr_cycle_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="kr_cycle_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="krEndTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="kr_end_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="kr_end_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="krStartTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="kr_start_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="kr_start_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="ladleDespatchTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ladle_despatch_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="ladle_despatch_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="postRankingEndTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="post_ranking_end_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="post_ranking_end_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="postRankingStartTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="post_ranking_start_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="post_ranking_start_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="pouringEndTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="pouring_end_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="pouring_end_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="pouringStartTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="pouring_start_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="pouring_start_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="preRankingEndTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="pre_ranking_end_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="pre_ranking_end_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="preRankingStartTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="pre_ranking_start_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="pre_ranking_start_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="tarpedoInTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="tarpedo_in_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="tarpedo_in_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="tarpedoOutTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="tarpedo_out_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="tarpedo_out_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="treatmentEndTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="treatment_end_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="treatment_end_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+		<field name="treatmentStartTime" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="treatment_start_time"/>
+			<property name="com.jaspersoft.studio.field.label" value="treatment_start_time"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="process_time_details"/>
+		</field>
+	</subDataset>
+	<parameter name="Parameter1" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[select * from  kr_production_report.treatment_details]]>
+	</queryString>
+	<background>
+		<band height="70" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="265" splitType="Stretch">
+			<componentElement>
+				<reportElement x="0" y="20" width="1060" height="220" uuid="1bc95026-7bab-423a-b75c-ac37bc4d6682">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset1" uuid="5f416de2-ef2f-4637-a565-688b84894031">
+						<datasetParameter name="Parameter1">
+							<datasetParameterExpression><![CDATA[$P{Parameter1}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[$P{Parameter1}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="56" uuid="0e6e32cb-af34-4c82-bfbc-e2796426504d">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="56" height="30" uuid="8f560eb6-e735-4dea-908f-8a941d14a4da"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[tarpedoInTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="30" uuid="8f9e9d88-cd47-4bf4-a1a8-eb0f6db8d44c"/>
+								<textFieldExpression><![CDATA[$F{tarpedoInTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="56" uuid="29df488b-a1c0-4210-8d84-1f93b482949f">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="56" height="30" uuid="dd7ea756-1080-4caf-b52e-896a2fda7f9c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[tarpedoOutTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="30" uuid="e14639dc-444e-4b28-824b-ccd0ecbc387b"/>
+								<textFieldExpression><![CDATA[$F{tarpedoOutTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="56" uuid="829e7709-e83d-42ca-b711-894a5cbd5409">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="56" height="30" uuid="65e54dee-0f75-4a89-b335-bc1aecf579b4"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[pouringStartTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="30" uuid="1892fad3-a143-43eb-b8dc-286bba38f156"/>
+								<textFieldExpression><![CDATA[$F{pouringStartTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="56" uuid="d880ec49-9bd0-4a2c-9128-bf19c867d98b">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="56" height="30" uuid="cba14507-0ce7-4f4c-a34f-8ec18d15494d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[pouringEndTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="30" uuid="4aa9243a-6f53-4843-9363-0781ca8bd580"/>
+								<textFieldExpression><![CDATA[$F{pouringEndTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="56" uuid="df3a93fb-9665-4846-87c5-a9ddad783f7b">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="56" height="30" uuid="34102f7a-eff0-4b64-93ee-f6a46d704fd3"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[preRankingStartTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="30" uuid="63f5e54b-3217-49b3-a66f-a3144bb2171e"/>
+								<textFieldExpression><![CDATA[$F{preRankingStartTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="54" uuid="c4304143-cc24-4f04-8c45-837cf6659106">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="54" height="30" uuid="17c40040-e073-431b-b899-6d26238cc2b6"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[preRankingEndTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="54" height="30" uuid="715b00cd-8c09-4b38-b06b-3431c840c2ad"/>
+								<textFieldExpression><![CDATA[$F{preRankingEndTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="54" uuid="16de7076-3fc4-464e-aca0-a67df29e3b82">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="54" height="30" uuid="d24ea988-78ff-4917-a3aa-45cbc96cb93d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[treatmentStartTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="54" height="30" uuid="4cd91eeb-2793-4ec7-9936-56584f887f62"/>
+								<textFieldExpression><![CDATA[$F{treatmentStartTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="54" uuid="17c74780-1fea-499c-bd28-4014be6d3886">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="54" height="30" uuid="b452d141-4538-49cc-ba3f-208a48f14303"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[treatmentEndTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="54" height="30" uuid="9b933853-ba26-4b42-9542-af45480be805"/>
+								<textFieldExpression><![CDATA[$F{treatmentEndTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="52" uuid="da6bb9dd-0563-44b5-9b7e-05b62851d051">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="52" height="30" uuid="bbb4c43d-f192-48ba-8e98-c921168b2ab1"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[postRankingStartTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="52" height="30" uuid="22770bc6-081a-4b3d-ac99-dd2ae8a6420a"/>
+								<textFieldExpression><![CDATA[$F{postRankingStartTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="51" uuid="b8e2673f-07ac-45eb-be6d-d86689015fea">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="51" height="30" uuid="a712ce5b-4ba5-4fb0-ba93-9268ab61fa1e"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[postRankingEndTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="51" height="30" uuid="ffc81167-4f72-4ddb-a537-106e3c14b446"/>
+								<textFieldExpression><![CDATA[$F{postRankingEndTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="49" uuid="45e871ff-e73d-486a-97c4-c25b206afeca">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="49" height="30" uuid="c2c43b5a-a06e-4da4-a23f-ab94439678a7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[krStartTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="49" height="30" uuid="108a905e-ffb5-4062-9b27-428c68463c85"/>
+								<textFieldExpression><![CDATA[$F{krStartTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="49" uuid="dacf7138-983e-4a3d-822f-d6a6aa224ad2">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="49" height="30" uuid="2caa202c-ee35-4272-89e8-7679b99a16ef"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[krEndTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="49" height="30" uuid="f4776b10-7f21-47cf-84d3-860622a51abe"/>
+								<textFieldExpression><![CDATA[$F{krEndTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="48" uuid="a002906c-e5dc-4a5d-be36-72bd3dc590d2">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="48" height="30" uuid="c7f32a14-3cff-4af8-85d1-584d8fe5c8a0"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[krCycleTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="48" height="30" uuid="11d1d212-98f7-4b25-af0b-a36d8e3a1492"/>
+								<textFieldExpression><![CDATA[$F{krCycleTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46" uuid="7f7a2b93-024b-4c58-84aa-cb1d6c541312">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column14"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="46" height="30" uuid="8f0a9709-1433-4984-ac43-dd05c3877d8c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[ladleDespatchTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="46" height="30" uuid="b70501c6-a4c5-4ce7-9581-ee555f8fc286"/>
+								<textFieldExpression><![CDATA[$F{ladleDespatchTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="44" uuid="288f7fc8-cc8c-43e1-9963-015e59d65245">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column15"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="44" height="30" uuid="54712e1f-4a1e-4662-90fa-cffcfc3366e0"/>
+								<text><![CDATA[dataTypeEntry]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="44" height="30" uuid="3ffce3d5-ba4f-4e9d-b2db-c8ea864a45fb"/>
+								<textFieldExpression><![CDATA[$F{dataTypeEntry}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="48" uuid="df7f1cae-9eb3-4f92-8c56-3c3a15be6730">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column16"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="48" height="30" uuid="104cde6b-589f-4bfb-8b1a-7c759e2e89bc"/>
+								<text><![CDATA[bcBayArrivalTime]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="48" height="30" uuid="83d3c282-fd3a-4c5c-a6c0-04d252664e53"/>
+								<textFieldExpression><![CDATA[$F{bcBayArrivalTime}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="51" uuid="5e0e1661-af5c-4c82-8b83-9e1e641d08d2">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column17"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="51" height="30" uuid="e96df11f-dd02-4b28-b987-19c17ec48453"/>
+								<text><![CDATA[reTreatment]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="51" height="30" uuid="b61c8e35-b805-41c7-8c43-12fcd0c242f4"/>
+								<textFieldExpression><![CDATA[$F{reTreatment}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="18612dd5-1a7d-4966-b11b-b3a602afe841">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column18"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="30" uuid="68a5d0ad-888c-4590-b5c1-4a48e239dd56"/>
+								<text><![CDATA[treatCounter]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="55" height="30" uuid="6685384b-61f7-423d-b16c-a82cfcf8db6e"/>
+								<textFieldExpression><![CDATA[$F{treatCounter}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="68b8dc1f-ac37-40c0-b16e-409b3c90de2e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column19"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="30" uuid="ff3d8d78-b62e-4ae4-b43b-4b1d9836e9af"/>
+								<text><![CDATA[impellerRefractSupplier]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="30" uuid="f65b0064-cb9d-45d3-b7cf-430a1e8036ef"/>
+								<textFieldExpression><![CDATA[$F{impellerRefractSupplier}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="65" uuid="03c76ac4-5b0b-4779-8577-4d15b6171dd9">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column20"/>
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="65" height="30" uuid="d0d45ed2-763f-4b39-9e70-1cde4657db53"/>
+								<text><![CDATA[remarks]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="65" height="30" uuid="f0a35d75-a41a-4e9c-ab51-3c5519e03423"/>
+								<textFieldExpression><![CDATA[$F{remarks}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<summary>
+		<band height="50" splitType="Stretch"/>
+	</summary>
+</jasperReport>
